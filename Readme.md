@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Bodik Malomuzh](https://up.htmlacademy.ru/ecmascript/10/user/329099).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Рубец](https://up.htmlacademy.ru/ecmascript/10/user/41580).
 
 ---
 
