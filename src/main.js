@@ -5,6 +5,7 @@ import {getTripSort} from './components/sort.js';
 import {getListOfTripDays, getTripDay, getTripDayInfo} from './components/days.js';
 import {getListOfTripEvents, getTripEvent} from './components/event.js';
 import {getTripEditEvent} from './components/event-edit.js';
+import {generateTripInfo} from './mock/event.js';
 
 const TRIP_EVENT_COUNT = 3;
 
@@ -36,6 +37,8 @@ renderElement(getTripDayInfo(), tripDayElement);
 renderElement(getListOfTripEvents(), tripDayElement);
 
 const listOfTripEventsElement = listOfTripDaysElement.querySelector(`.trip-events__list`);
-renderElement(getTripEditEvent(), listOfTripEventsElement);
+const event = generateTripInfo();
+console.log(event);
+renderElement(getTripEditEvent(event), listOfTripEventsElement);
 renderTripEvents();
 
