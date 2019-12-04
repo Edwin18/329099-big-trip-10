@@ -1,7 +1,20 @@
+import {getRandomIntegerNumber} from '../utils.js';
+
 const DESCRIPTION_COUNT = {
   MIN: 1,
   MAX: 3
 };
+
+const ADDITIONAL_OPTION_COUNT = {
+  MIN: 0,
+  MAX: 3
+};
+
+const URL_COUNT = 5;
+
+const TRIP_COUNT = 5;
+
+const DAY_COUNT = 3;
 
 const tripType = [
   `bus`,
@@ -39,16 +52,12 @@ const tripDescriptionList = [
 ];
 
 const additionalOptions = [
-  {name: `Add luggage`, price: 10},
-  {name: `Switch to comfort class`, price: 150},
-  {name: `Add meal`, price: 2},
-  {name: `Choose seats`, price: 9},
-  {name: `Travel by train`, price: 40}
+  {text: `Add luggage`, price: 10, name: `luggage`},
+  {text: `Switch to comfort class`, price: 150, name: `comfort`},
+  {text: `Add meal`, price: 2, name: `meal`},
+  {text: `Choose seats`, price: 9, name: `seats`},
+  {text: `Travel by train`, price: 40, name: `train`}
 ];
-
-const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(max * Math.random());
-};
 
 const getRandomArr = (min, max, arr) => {
   const counter = getRandomIntegerNumber(min, max);
@@ -61,11 +70,37 @@ const getRandomArr = (min, max, arr) => {
   return description;
 };
 
-export const generateTripInfo = () => {
-  return {
-    tripType: tripType[getRandomIntegerNumber(0, tripType.length)],
-    city: destinationTowns[getRandomIntegerNumber(0, destinationTowns.length)],
-    description: getRandomArr(DESCRIPTION_COUNT.MIN, DESCRIPTION_COUNT.MAX, tripDescriptionList).join(`\n`),
-    additional: additionalOptions
-  };
-};
+const generateUrls = () => (
+  new Array(URL_COUNT)
+    .fill(``)
+    .map(() => (`http://picsum.photos/300/150?r=${Math.random()}`))
+);
+
+const generateTrip = () => ({
+  type: tripType[getRandomIntegerNumber(0, tripType.length)],
+  moveTo: destinationTowns[getRandomIntegerNumber(0, destinationTowns.length)],
+  date: new Date(),
+  price: getRandomIntegerNumber(10, 500),
+  addOptions: getRandomArr(ADDITIONAL_OPTION_COUNT.MIN, ADDITIONAL_OPTION_COUNT.MAX, additionalOptions),
+  aboutText: getRandomArr(DESCRIPTION_COUNT.MIN, DESCRIPTION_COUNT.MAX, tripDescriptionList).join(`\n`),
+  aboutImg: generateUrls()
+});
+
+const generateTrips = () => (
+  new Array(TRIP_COUNT)
+    .fill(``)
+    .map(generateTrip)
+);
+
+export const generateDays = () => (
+  new Array(DAY_COUNT)
+    .fill(``)
+    .map((elem, index) => ({
+      day: index + 1,
+      dayInfo: generateTrips(),
+      dayDate: new Date()
+    })
+    )
+);
+
+console.log(generateDays());
