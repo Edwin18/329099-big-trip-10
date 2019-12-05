@@ -1,3 +1,20 @@
+import {getDatetimeFull, getPureDateNumber} from '../utils.js';
+
+const getTimeDifference = (dateStart, dateEnd) => {
+  let hoursDifference = Math.abs(dateStart.getHours() - dateEnd.getHours());
+  let minutesDifference = 60 - dateStart.getMinutes();
+
+  if (dateStart.getMinutes() > dateEnd.getMinutes()) {
+    minutesDifference = minutesDifference + dateEnd.getMinutes();
+    hoursDifference = hoursDifference - 1;
+  }
+
+  const hoursResult = hoursDifference <= 0 ? `` : `${getPureDateNumber(hoursDifference)}H`;
+  const minutesResult = minutesDifference <= 0 ? `` : `${getPureDateNumber(minutesDifference)}M`;
+
+  return `${hoursResult} ${minutesResult}`;
+};
+
 const generateOfferList = (additions) => (
   additions.map((elem) => (`
     <li class="event__offer">
@@ -20,11 +37,11 @@ export const getTripEvent = (day) => (
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+            <time class="event__start-time" datetime="${getDatetimeFull(elem.startDate)}">${getPureDateNumber(elem.startDate.getHours())}:${getPureDateNumber(elem.startDate.getMinutes())}</time>
             —
-            <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+            <time class="event__end-time" datetime="${getDatetimeFull(elem.endDate)}">${getPureDateNumber(elem.endDate.getHours())}:${getPureDateNumber(elem.endDate.getMinutes())}</time>
           </p>
-          <p class="event__duration">1H 30M</p>
+          <p class="event__duration">${getTimeDifference(elem.startDate, elem.endDate)}</p>
         </div>
 
         <p class="event__price">
