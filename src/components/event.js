@@ -1,10 +1,12 @@
 import {getDatetimeFull, getPureDateNumber} from '../utils.js';
 
 const getTimeDifference = (dateStart, dateEnd) => {
-  let hoursDifference = Math.abs(dateStart.getHours() - dateEnd.getHours());
-  let minutesDifference = 60 - dateStart.getMinutes();
+  let hoursDifference = dateEnd.getHours() - dateStart.getHours();
+  let minutesDifference = dateEnd.getMinutes() - dateStart.getMinutes();
 
   if (dateStart.getMinutes() > dateEnd.getMinutes()) {
+    minutesDifference = 0;
+    minutesDifference = 60 - dateStart.getMinutes();
     minutesDifference = minutesDifference + dateEnd.getMinutes();
     hoursDifference = hoursDifference - 1;
   }
