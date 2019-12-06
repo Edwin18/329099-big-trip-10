@@ -8,27 +8,25 @@ const getImgList = () => {
 };
 
 const getOfferList = (offers) => {
-  const offerList = [];
-
-  for (let i = 0; i < offers.length; i++) {
-    offerList.push(`
+  const offerList = offers.map((elem)=>{
+    return `
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-${i + 1}" type="checkbox" name="event-offer-comfort" ${Math.random() > 0.5 ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-comfort-${i + 1}">
-          <span class="event__offer-title">${offers[i].name}</span>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${elem.name}-1" type="checkbox" name="event-offer-${elem.name}" ${Math.random() > 0.5 ? `checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${elem.name}-1">
+          <span class="event__offer-title">${elem.text}</span>
           +
-          €&nbsp;<span class="event__offer-price">${offers[i].price}</span>
+          €&nbsp;<span class="event__offer-price">${elem.price}</span>
         </label>
       </div>
-      `
-    );
-  }
+      `;
+  })
+  .join(`\n`);
 
-  return offerList.join(`\n`);
+  return offerList;
 };
 
 export const getTripEditEvent = (event) => {
-  const {tripType, city, description, additional} = event;
+  const {tripType, city, description, additional, cost} = event;
   return `
     <li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
@@ -115,7 +113,7 @@ export const getTripEditEvent = (event) => {
             <span class="visually-hidden">Price</span>
             €
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${cost}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
