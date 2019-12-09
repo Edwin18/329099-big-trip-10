@@ -34,7 +34,7 @@ const generateOfferList = (offers) => {
   let counter = 0;
 
   for (let i = 0; i < offers.length; i++) {
-    if (offers[i].checked === true) {
+    if (offers[i].checked) {
       offersList.push(
           `<li class="event__offer">
             <span class="event__offer-title">${offers[i].text}</span>
