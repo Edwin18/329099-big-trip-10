@@ -1,19 +1,38 @@
-import {getTripEvent} from './event.js';
-import {getMonthString, getDatetime} from '../utils.js';
+import {getMonthString, getDatetime, createElement} from '../utils.js';
 
-export const getListOfTripDays = () => (`
-  <ul class="trip-days"></ul>
-`);
-
-export const getTripDayInfo = (daysData) => (
-  daysData.map((elem, index) => (`
-    <li class="trip-days__item  day">
-      <div class="day__info">
-        <span class="day__counter">${elem.day}</span>
-        <time class="day__date" datetime="${getDatetime(elem.dayDate)}">${getMonthString(elem.dayDate)} ${elem.dayDate.getDate() + index}</time>
-      </div>
-      <ul class="trip-events__list">${getTripEvent(elem)}</ul>
-    </li>
-  `))
-  .join(`\n`)
+const getListOfTripDays = (daysData) => (
+  `<ul class="trip-days">${getTripDayInfo(daysData)}</ul>`
 );
+
+const getTripDayInfo = (dayData) => (
+  `<li class="trip-days__item  day">
+    <div class="day__info">
+      <span class="day__counter">${dayData.day}</span>
+      <time class="day__date" datetime="${getDatetime(dayData.dayDate)}">${getMonthString(dayData.dayDate)} ${dayData.dayDate.getDate()}</time>
+    </div>
+    <ul class="trip-events__list"></ul>
+  </li>`
+);
+
+export default class DaysComponent {
+  constructor(dayData) {
+    this._dayData = dayData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getListOfTripDays(this._dayData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
