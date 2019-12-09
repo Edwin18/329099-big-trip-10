@@ -1,10 +1,11 @@
-import {getMonthString} from '../utils.js';
+import {getMonthString, createElement} from '../utils.js';
 
 const getTripInfoDate = (data) => {
   const lastIndex = data.length - 1;
-  const dayDate = data[lastIndex].dayDate;
+  const lastDayDate = data[lastIndex].dayDate;
+  const firstDayDate = data[0].dayDate;
 
-  return `${getMonthString(data[0].dayDate)} ${data[0].dayDate.getDate()}&nbsp;—&nbsp;${dayDate.getDate() + lastIndex}`;
+  return `${getMonthString(firstDayDate)} ${firstDayDate.getDate()}&nbsp;—&nbsp;${lastDayDate.getDate() + lastIndex}`;
 };
 
 const getTripInfoTitle = (data) => {
@@ -14,9 +15,32 @@ const getTripInfoTitle = (data) => {
   return `${data[0].dayInfo[0].moveTo} — ... — ${dayInfo[dayInfo.length - 1].moveTo}`;
 };
 
-export const getTripInfoElement = (data) => (`
-  <div class="trip-info__main">
+const getTripInfoElement = (data) => (
+  `<div class="trip-info__main">
     <h1 class="trip-info__title">${getTripInfoTitle(data)}</h1>
     <p class="trip-info__dates">${getTripInfoDate(data)}</p>
-  </div>
-`);
+  </div>`
+);
+
+export default class TripInfoComponent {
+  constructor(data) {
+    this._data = data;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getTripInfoElement(this._data);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

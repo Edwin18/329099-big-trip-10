@@ -1,41 +1,73 @@
-import {getTripInfoElement} from './components/trip-info.js';
-import {getTripControls} from './components/controls.js';
-import {getTripFilter} from './components/filter.js';
-import {getTripSort} from './components/sort.js';
-import {getListOfTripDays, getTripDayInfo} from './components/days.js';
+import TripInfoComponent from './components/trip-info.js';
+import ControlsComponent from './components/controls.js';
+import FilterComponent from './components/filter.js';
+import SortComponent from './components/sort.js';
+import DaysComponent from './components/days.js';
+import EventComponent from './components/event.js';
+import EventEditComponent from './components/event-edit.js';
 import {generateDays} from './mock/event.js';
+import {RenderPosition, render} from './utils.js';
 
 const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
 const tripControlsElement = document.querySelector(`.trip-controls`);
 const tripEventsElement = document.querySelector(`.trip-events`);
 const data = generateDays();
 
-const renderElement = (element, parent, position = `beforeend`) => {
-  parent.insertAdjacentHTML(position, element);
+const renderEvent = (container, eventData) => {
+  const eventComponent = new EventComponent(eventData);
+  const eventEditComponent = new EventEditComponent(eventData);
+
+  const editButton = eventComponent.getElement().querySelector(`.event__rollup-btn`);
+  editButton.addEventListener(`click`, () => {
+    container.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  });
+
+  const editForm = eventEditComponent.getElement().querySelector(`form`);
+  editForm.addEventListener(`submit`, () => {
+    container.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  });
+
+  const editFormBtn = eventEditComponent.getElement().querySelector(`.event__rollup-btn`);
+  editFormBtn.addEventListener(`click`, () => {
+    container.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  });
+
+
+  render(container, eventComponent.getElement(), RenderPosition.BEFOREEND);
 };
 
-renderElement(getTripInfoElement(data), tripInfoElement, `afterbegin`);
-renderElement(getTripControls(), tripControlsElement.querySelector(`h2`), `afterend`);
-renderElement(getTripFilter(), tripControlsElement);
-renderElement(getTripSort(), tripEventsElement);
-renderElement(getListOfTripDays(), tripEventsElement);
+render(tripInfoElement, new TripInfoComponent(data).getElement(), RenderPosition.AFTERBEGIN);
+render(tripControlsElement, new ControlsComponent().getElement(), RenderPosition.AFTERBEGIN);
+render(tripControlsElement, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
+render(tripEventsElement, new SortComponent().getElement(), RenderPosition.BEFOREEND);
+data.forEach((dayData) => {
+  const daysComponent = new DaysComponent(dayData);
+  const eventListElement = daysComponent.getElement().querySelector(`.trip-events__list`);
 
-const listOfTripDaysElement = tripEventsElement.querySelector(`.trip-days`);
-renderElement(getTripDayInfo(data), listOfTripDaysElement);
+  dayData.dayInfo.forEach((eventData) => {
+    renderEvent(eventListElement, eventData);
+  });
 
+  render(tripEventsElement, daysComponent.getElement(), RenderPosition.BEFOREEND);
+});
 
 // Тестовые скрипты, пусть пока что побудут тут)
 const getTotalPrice = () => {
-  const allEvents = Array.from(document.querySelectorAll(`.event__price-value`));
-  const allOffers = Array.from(document.querySelectorAll(`.event__offer-price`));
   const totalPriceElement = document.querySelector(`.trip-info__cost-value`);
-  let eventsPrice = 0;
-  let offersPrice = 0;
+  let totalPrice = 0;
 
-  allEvents.forEach((elem) => (eventsPrice = eventsPrice + parseInt(elem.innerText, 10)));
-  allOffers.forEach((elem) => (offersPrice = offersPrice + parseInt(elem.innerText, 10)));
+  data.forEach((day) => {
+    day.dayInfo.forEach((event) => {
+      totalPrice = totalPrice + event.price;
+      event.offers.forEach((offer) => {
+        if (offer.checked === true) {
+          totalPrice = totalPrice + offer.price;
+        }
+      });
+    });
+  });
 
-  totalPriceElement.innerText = eventsPrice + offersPrice;
+  totalPriceElement.innerText = totalPrice;
 };
 
 getTotalPrice();

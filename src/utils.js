@@ -23,6 +23,11 @@ const MONTH = {
   '11': `DEC`,
 };
 
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
 export const getBoolean = () => (Math.random() > 0.5);
 
 export const getMonthString = (date) => (MONTH[date.getMonth()]);
@@ -33,12 +38,6 @@ export const getRandomArr = (min, max, arr) => (
   new Array(getRandomIntegerNumber(min, max))
     .fill(``)
     .map(() => (arr[getRandomIntegerNumber(0, arr.length)]))
-);
-
-export const generateUrls = (count, url) => (
-  new Array(count)
-    .fill(``)
-    .map(() => (url))
 );
 
 export const getRandomDateTime = () => {
@@ -52,8 +51,30 @@ export const getRandomDateTime = () => {
   return date;
 };
 
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstElementChild;
+};
+
+export const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
 export const getDatetime = (date) => (`${date.getFullYear()}-${getPureDateNumber(date.getMonth())}-${getPureDateNumber(date.getDate())}`);
 
 export const getDatetimeFull = (date) => (`${date.getFullYear()}-${getPureDateNumber(date.getMonth())}-${getPureDateNumber(date.getDate())}T${getPureDateNumber(date.getHours())}:${getPureDateNumber(date.getMinutes())}`);
+
+export const getPureHours = (data) => (`${getPureDateNumber(data.getHours())}`);
+
+export const getPureMinutes = (data) => (`${getPureDateNumber(data.getMinutes())}`);
 
 export const getPureDateNumber = (number) => (number < 10 ? `0${number}` : `${number}`);

@@ -1,15 +1,10 @@
-import {getRandomIntegerNumber, getRandomArr, generateUrls, getBoolean, getRandomDateTime} from '../utils.js';
+import {getRandomIntegerNumber, getRandomArr, getBoolean, getRandomDateTime} from '../utils.js';
 
-const TRIP_COUNT = 5;
+const TRIP_COUNT = 4;
 const DAY_COUNT = 3;
 const URL_COUNT = 5;
-const RANDOM_IMG_URL = `http://picsum.photos/300/150?r=${Math.random()}`;
 const DESCRIPTION_COUNT = {
   MIN: 1,
-  MAX: 3
-};
-const ADDITIONAL_OPTION_COUNT = {
-  MIN: 0,
   MAX: 3
 };
 const PRICE = {
@@ -17,20 +12,23 @@ const PRICE = {
   MAX: 500
 };
 
-const tripType = [
-  `bus`,
-  `check-in`,
-  `drive`,
-  `flight`,
-  `restaurant`,
-  `ship`,
-  `sightseeing`,
-  `taxi`,
-  `train`,
-  `transport`,
-  `trip`
+export const tripType = [
+  {text: `Transfer`, action: `to`, list: [
+    {text: `Taxi`, name: `taxi`},
+    {text: `Bus`, name: `bus`},
+    {text: `Train`, name: `train`},
+    {text: `Ship`, name: `ship`},
+    {text: `Transport`, name: `transport`},
+    {text: `Drive`, name: `drive`},
+    {text: `Flight`, name: `flight`}
+  ]},
+  {text: `Activity`, action: `in`, list: [
+    {text: `Check-in`, name: `check-in`},
+    {text: `Sightseeing`, name: `sightseeing`},
+    {text: `Restaurant`, name: `restaurant`}
+  ]}
 ];
-const destinationTowns = [
+export const destinationTowns = [
   `Amsterdam`,
   `Geneva`,
   `Chamonix`,
@@ -57,15 +55,37 @@ const additionalOptions = [
   {text: `Travel by train`, price: 40, name: `train`}
 ];
 
+const generateOffers = () => {
+  const offers = JSON.parse(JSON.stringify(additionalOptions));
+
+  offers.forEach((elem) => (
+    elem.checked = getBoolean()
+  ));
+
+  return offers;
+};
+
+const generateUrls = () => (
+  new Array(URL_COUNT)
+    .fill(``)
+    .map(() => (`http://picsum.photos/300/150?r=${Math.random()}`))
+);
+
+const getRandomTripType = () => {
+  const randomTypeList = tripType[getRandomIntegerNumber(0, tripType.length)];
+
+  return randomTypeList.list[getRandomIntegerNumber(0, randomTypeList.list.length)].name;
+};
+
 const generateTrip = () => ({
-  type: tripType[getRandomIntegerNumber(0, tripType.length)],
+  type: getRandomTripType(),
   moveTo: destinationTowns[getRandomIntegerNumber(0, destinationTowns.length)],
   startDate: new Date(),
   endDate: getRandomDateTime(),
   price: getRandomIntegerNumber(PRICE.MIN, PRICE.MAX),
-  addOptions: getRandomArr(ADDITIONAL_OPTION_COUNT.MIN, ADDITIONAL_OPTION_COUNT.MAX, additionalOptions),
+  offers: generateOffers(),
   aboutText: getRandomArr(DESCRIPTION_COUNT.MIN, DESCRIPTION_COUNT.MAX, tripDescriptionList).join(`\n`),
-  aboutImg: generateUrls(URL_COUNT, RANDOM_IMG_URL),
+  aboutImg: generateUrls(),
   favorite: getBoolean()
 });
 
