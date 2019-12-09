@@ -1,11 +1,8 @@
 import {createElement, getPureHours, getPureMinutes} from '../utils.js';
 import {destinationTowns, tripType} from '../mock/event.js';
 
-const destinationTownsList = destinationTowns;
-const tripTypeList = tripType;
-
 const getDestinationTownsList = () => (
-  destinationTownsList.map((town) => (
+  destinationTowns.map((town) => (
     `<option value="${town}"></option>`
   ))
   .join(`\n`)
@@ -51,7 +48,7 @@ const getEventTypeItems = (eventItems, curentType) => (
 );
 
 const getEventTypeList = (curentType) => (
-  tripTypeList.map((elem) => (
+  tripType.map((elem) => (
     `<fieldset class="event__type-group">
       <legend class="visually-hidden">${elem.text}</legend>
       ${getEventTypeItems(elem.list, curentType)}

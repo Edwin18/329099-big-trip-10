@@ -1,9 +1,5 @@
 import {getMonthString, getDatetime, createElement} from '../utils.js';
 
-const getListOfTripDays = (daysData) => (
-  `<ul class="trip-days">${getTripDayInfo(daysData)}</ul>`
-);
-
 const getTripDayInfo = (dayData) => (
   `<li class="trip-days__item  day">
     <div class="day__info">
@@ -21,7 +17,7 @@ export default class DaysComponent {
   }
 
   getTemplate() {
-    return getListOfTripDays(this._dayData);
+    return getTripDayInfo(this._dayData);
   }
 
   getElement() {
