@@ -1,3 +1,5 @@
+import {getRandomIntegerNumber} from './common.js';
+
 const HOURS = {
   MIN: 0,
   MAX: 5
@@ -23,22 +25,7 @@ const MONTH = {
   '11': `DEC`,
 };
 
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
-
-export const getBoolean = () => (Math.random() > 0.5);
-
 export const getMonthString = (date) => (MONTH[date.getMonth()]);
-
-export const getRandomIntegerNumber = (min, max) => (min + Math.floor(max * Math.random()));
-
-export const getRandomArr = (min, max, arr) => (
-  new Array(getRandomIntegerNumber(min, max))
-    .fill(``)
-    .map(() => (arr[getRandomIntegerNumber(0, arr.length)]))
-);
 
 export const getRandomDateTime = () => {
   const date = new Date();
@@ -49,24 +36,6 @@ export const getRandomDateTime = () => {
   date.setMinutes(date.getMinutes() + randomMinutes);
 
   return date;
-};
-
-export const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstElementChild;
-};
-
-export const render = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-  }
 };
 
 export const getDatetime = (date) => (`${date.getFullYear()}-${getPureDateNumber(date.getMonth())}-${getPureDateNumber(date.getDate())}`);

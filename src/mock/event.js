@@ -1,4 +1,5 @@
-import {getRandomIntegerNumber, getRandomArr, getBoolean, getRandomDateTime} from '../utils.js';
+import {getRandomIntegerNumber, getRandomArr, getBoolean} from '../utils/common.js';
+import {getRandomDateTime} from '../utils/date.js';
 
 const TRIP_COUNT = 4;
 const DAY_COUNT = 3;

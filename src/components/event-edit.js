@@ -1,4 +1,5 @@
-import {createElement, getPureHours, getPureMinutes} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
+import {getPureHours, getPureMinutes} from '../utils/date.js';
 import {destinationTowns, tripType} from '../mock/event.js';
 
 const getDestinationTownsList = () => (
@@ -132,25 +133,21 @@ const getTripEditEvent = (eventData) => (
   </li>`
 );
 
-export default class EventEditComponent {
+export default class EventEditComponent extends AbstractComponent {
   constructor(eventData) {
+    super();
     this._eventData = eventData;
-    this._element = null;
   }
 
   getTemplate() {
     return getTripEditEvent(this._eventData);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  setCloseButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 
-  removeElement() {
-    this._element = null;
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
   }
 }
