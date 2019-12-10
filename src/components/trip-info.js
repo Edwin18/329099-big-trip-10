@@ -1,4 +1,5 @@
-import {getMonthString, createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
+import {getMonthString} from '../utils/date.js';
 
 const getTripInfoDate = (data) => {
   const lastIndex = data.length - 1;
@@ -22,25 +23,13 @@ const getTripInfoElement = (data) => (
   </div>`
 );
 
-export default class TripInfoComponent {
+export default class TripInfoComponent extends AbstractComponent {
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
   }
 
   getTemplate() {
     return getTripInfoElement(this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

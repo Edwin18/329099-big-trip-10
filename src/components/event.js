@@ -1,4 +1,5 @@
-import {getDatetimeFull, createElement, getPureHours, getPureMinutes, getPureDateNumber} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
+import {getDatetimeFull, getPureHours, getPureMinutes, getPureDateNumber} from '../utils/date.js';
 
 const TIME = {
   HOURS: 24,
@@ -86,25 +87,17 @@ const getTripEvent = (eventData) => (
   </li>`
 );
 
-export default class EventComponent {
+export default class EventComponent extends AbstractComponent {
   constructor(eventData) {
+    super();
     this._eventData = eventData;
-    this._element = null;
   }
 
   getTemplate() {
     return getTripEvent(this._eventData);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 }

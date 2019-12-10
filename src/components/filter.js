@@ -1,5 +1,5 @@
+import AbstractComponent from './abstract-component.js';
 import {filters} from '../mock/filter.js';
-import {createElement} from '../utils.js';
 
 const generateFilters = () => (
   filters.map((elem) => (
@@ -18,24 +18,8 @@ const getTripFilter = () => (
   </form>`
 );
 
-export default class FilterComponent {
-  constructor() {
-    this._element = null;
-  }
-
+export default class FilterComponent extends AbstractComponent {
   getTemplate() {
     return getTripFilter();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
