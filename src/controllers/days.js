@@ -1,4 +1,4 @@
-// import {getBoolean} from '../utils/common.js';
+import {getBoolean} from '../utils/common.js';
 import {RenderPosition, render, remove} from '../utils/render.js';
 import DaysComponent from '../components/days.js';
 import DaysListComponent from '../components/days-list.js';
@@ -44,11 +44,11 @@ export default class EventsController {
   }
 
   render() {
-    // // Рендер заглушки если дата не пришла, пока что сделал так
-    // if (getBoolean()) {
-    //   render(this._container, this._stubComponent.getElement(), RenderPosition.BEFOREEND);
-    //   return;
-    // }
+    // Рендер заглушки если дата не пришла, пока что сделал так
+    if (getBoolean()) {
+      render(this._container, this._stubComponent.getElement(), RenderPosition.BEFOREEND);
+      return;
+    }
 
     render(this._container, this._sortComponent.getElement(), RenderPosition.BEFOREEND);
     render(this._container, this._daysListComponent.getElement(), RenderPosition.BEFOREEND);
@@ -57,17 +57,6 @@ export default class EventsController {
       const allEvents = getAllEvents(this._daysData);
       let sortedData = [];
 
-      // sort
-      switch (sortType) {
-        case SORT_TYPE.TIME:
-          sortedData = allEvents.slice().sort((a, b) => (b.endDate.getTime() - b.startDate.getTime()) - (a.endDate.getTime() - a.startDate.getTime()));
-          break;
-        case SORT_TYPE.PRICE:
-          sortedData = allEvents.slice().sort((a, b) => b.price - a.price);
-          break;
-      }
-
-      // render
       switch (sortType) {
         case SORT_TYPE.DEFAULT:
           remove(this._daysListComponent);
@@ -76,6 +65,7 @@ export default class EventsController {
           renderDays(this._daysData, this._daysListComponent.getElement());
           break;
         case SORT_TYPE.TIME:
+          sortedData = allEvents.slice().sort((a, b) => (b.endDate.getTime() - b.startDate.getTime()) - (a.endDate.getTime() - a.startDate.getTime()));
           remove(this._daysListComponent);
           remove(this._emptyDayComponent);
           render(this._container, this._emptyDayComponent.getElement(), RenderPosition.BEFOREEND);
@@ -84,6 +74,7 @@ export default class EventsController {
           ));
           break;
         case SORT_TYPE.PRICE:
+          sortedData = allEvents.slice().sort((a, b) => b.price - a.price);
           remove(this._daysListComponent);
           remove(this._emptyDayComponent);
           render(this._container, this._emptyDayComponent.getElement(), RenderPosition.BEFOREEND);
