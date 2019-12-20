@@ -1,4 +1,4 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {getPureHours, getPureMinutes} from '../utils/date.js';
 import {destinationTowns, tripType} from '../mock/event.js';
 
@@ -133,7 +133,7 @@ const getTripEditEvent = (eventData) => (
   </li>`
 );
 
-export default class EventEditComponent extends AbstractComponent {
+export default class EventEditComponent extends AbstractSmartComponent {
   constructor(eventData) {
     super();
     this._eventData = eventData;
@@ -149,5 +149,9 @@ export default class EventEditComponent extends AbstractComponent {
 
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+  }
+
+  setFavoriteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
   }
 }
