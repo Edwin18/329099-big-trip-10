@@ -141,6 +141,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._closeButtonClickHandler = null;
     this._submitHandler = null;
     this._favoriteButtonClickHandler = null;
+    this._selectTypeClickHandler = null;
   }
 
   getTemplate() {
@@ -151,6 +152,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.setCloseButtonClickHandler(this._closeButtonClickHandler);
     this.setSubmitHandler(this._submitHandler);
     this.setFavoriteButtonClickHandler(this._favoriteButtonClickHandler);
+    this.setSelectTypeClickHandler(this._selectTypeClickHandler);
   }
 
   setCloseButtonClickHandler(handler) {
@@ -172,6 +174,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   setSelectTypeClickHandler(handler) {
+    this._selectTypeClickHandler = handler;
     this.getElement().querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
       handler(evt);
     });
