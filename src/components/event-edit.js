@@ -137,21 +137,43 @@ export default class EventEditComponent extends AbstractSmartComponent {
   constructor(eventData) {
     super();
     this._eventData = eventData;
+
+    this._closeButtonClickHandler = null;
+    this._submitHandler = null;
+    this._favoriteButtonClickHandler = null;
   }
 
   getTemplate() {
     return getTripEditEvent(this._eventData);
   }
 
+  recoveryListeners() {
+    this.setCloseButtonClickHandler(this._closeButtonClickHandler);
+    this.setSubmitHandler(this._submitHandler);
+    this.setFavoriteButtonClickHandler(this._favoriteButtonClickHandler);
+  }
+
   setCloseButtonClickHandler(handler) {
+    this._closeButtonClickHandler = handler;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 
   setSubmitHandler(handler) {
+    this._submitHandler = handler;
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
   }
 
   setFavoriteButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__favorite-btn`).addEventListener(`click`, handler);
+    this._favoriteButtonClickHandler = handler;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, () => {
+      handler();
+      this.recoveryListeners();
+    });
+  }
+
+  setSelectTypeClickHandler(handler) {
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
+      handler(evt);
+    });
   }
 }
