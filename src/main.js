@@ -3,7 +3,7 @@ import {RenderPosition, render} from './utils/render.js';
 import TripInfoComponent from './components/trip-info.js';
 import ControlsComponent from './components/controls.js';
 import FilterComponent from './components/filter.js';
-import EventsController from './controllers/days.js';
+import TripController from './controllers/trip.js';
 
 const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
 const tripControlsElement = document.querySelector(`.trip-controls`);
@@ -14,8 +14,8 @@ render(tripInfoElement, new TripInfoComponent(data).getElement(), RenderPosition
 render(tripControlsElement, new ControlsComponent().getElement(), RenderPosition.AFTERBEGIN);
 render(tripControlsElement, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
 
-const eventsController = new EventsController(tripEventsElement, data);
-eventsController.render();
+const eventsController = new TripController(tripEventsElement);
+eventsController.render(data);
 
 // Тестовые скрипты, пусть пока что побудут тут)
 const getTotalPrice = () => {

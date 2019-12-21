@@ -1,4 +1,4 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {getPureHours, getPureMinutes} from '../utils/date.js';
 import {destinationTowns, tripType} from '../mock/event.js';
 
@@ -133,21 +133,50 @@ const getTripEditEvent = (eventData) => (
   </li>`
 );
 
-export default class EventEditComponent extends AbstractComponent {
+export default class EventEditComponent extends AbstractSmartComponent {
   constructor(eventData) {
     super();
     this._eventData = eventData;
+
+    this._closeButtonClickHandler = null;
+    this._submitHandler = null;
+    this._favoriteButtonClickHandler = null;
+    this._selectTypeClickHandler = null;
   }
 
   getTemplate() {
     return getTripEditEvent(this._eventData);
   }
 
+  recoveryListeners() {
+    this.setCloseButtonClickHandler(this._closeButtonClickHandler);
+    this.setSubmitHandler(this._submitHandler);
+    this.setFavoriteButtonClickHandler(this._favoriteButtonClickHandler);
+    this.setSelectTypeClickHandler(this._selectTypeClickHandler);
+  }
+
   setCloseButtonClickHandler(handler) {
+    this._closeButtonClickHandler = handler;
     this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
   }
 
   setSubmitHandler(handler) {
+    this._submitHandler = handler;
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+  }
+
+  setFavoriteButtonClickHandler(handler) {
+    this._favoriteButtonClickHandler = handler;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, () => {
+      handler();
+      this.recoveryListeners();
+    });
+  }
+
+  setSelectTypeClickHandler(handler) {
+    this._selectTypeClickHandler = handler;
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
+      handler(evt);
+    });
   }
 }

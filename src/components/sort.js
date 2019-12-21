@@ -60,7 +60,7 @@ export default class SortComponent extends AbstractComponent {
         return;
       }
 
-      if (evt.target.dataset.sortType === this._currenSortType) {
+      if (sortType === this._currenSortType) {
         return;
       }
 
