@@ -3,8 +3,8 @@ import {getPureHours, getPureMinutes} from '../utils/date.js';
 import {destinationTowns, tripType} from '../mock/event.js';
 
 import flatpickr from 'flatpickr';
-import mainStyle from '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import themeStyle from '../../node_modules/flatpickr/dist/themes/material_blue.css';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import '../../node_modules/flatpickr/dist/themes/material_blue.css';
 
 const getDestinationTownsList = () => (
   destinationTowns.map((town) => (
