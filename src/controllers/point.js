@@ -101,13 +101,15 @@ export default class PointController {
     replace(this._eventEditComponent, this._eventComponent);
 
     this._viewMode = VIEW_MODE.EDIT;
+
+    document.addEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
-      this._replaceEventToEdit();
+      this._replaceEditToEvent();
     }
   }
 }
