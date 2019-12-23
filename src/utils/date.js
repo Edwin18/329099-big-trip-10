@@ -1,4 +1,5 @@
 import {getRandomIntegerNumber} from './common.js';
+import moment from 'moment';
 
 const HOURS = {
   MIN: 0,
@@ -10,22 +11,24 @@ const MINUTES = {
   MAX: 59
 };
 
-const MONTH = {
-  '0': `JAN`,
-  '1': `FEB`,
-  '2': `MAR`,
-  '3': `APR`,
-  '4': `MAY`,
-  '5': `JUN`,
-  '6': `JUL`,
-  '7': `AUG`,
-  '8': `SEPT`,
-  '9': `OCT`,
-  '10': `NOV`,
-  '11': `DEC`,
-};
+export const formatTimeMonth = (date) => (moment(date).format(`MMM DD`));
 
-export const getMonthString = (date) => (MONTH[date.getMonth()]);
+export const formatTime = (date) => (moment(date).format(`HH:mm`));
+
+export const formatDatetime = (date) => (moment(date).format(`YYYY-MM-DD[T]HH:mm`));
+
+export const getTimeDifference = (start, end) => {
+  const startDate = moment(start);
+  const endDate = moment(end);
+
+  const duration = moment.duration(endDate.diff(startDate));
+
+  const days = duration.get(`days`);
+  const hours = duration.get(`hours`);
+  const minutes = duration.get(`minutes`);
+
+  return `${days <= 0 ? `` : `${days}D`} ${hours <= 0 ? `` : `${hours}H`} ${minutes <= 0 ? `` : `${minutes}M`}`;
+};
 
 export const getRandomDateTime = () => {
   const date = new Date();
@@ -37,13 +40,3 @@ export const getRandomDateTime = () => {
 
   return date;
 };
-
-export const getDatetime = (date) => (`${date.getFullYear()}-${getPureDateNumber(date.getMonth())}-${getPureDateNumber(date.getDate())}`);
-
-export const getDatetimeFull = (date) => (`${date.getFullYear()}-${getPureDateNumber(date.getMonth())}-${getPureDateNumber(date.getDate())}T${getPureDateNumber(date.getHours())}:${getPureDateNumber(date.getMinutes())}`);
-
-export const getPureHours = (data) => (`${getPureDateNumber(data.getHours())}`);
-
-export const getPureMinutes = (data) => (`${getPureDateNumber(data.getMinutes())}`);
-
-export const getPureDateNumber = (number) => (number < 10 ? `0${number}` : `${number}`);
