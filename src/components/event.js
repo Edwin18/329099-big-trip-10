@@ -1,34 +1,7 @@
 import AbstractComponent from './abstract-component.js';
-import {getDatetimeFull, getPureHours, getPureMinutes, getPureDateNumber} from '../utils/date.js';
+import {formatTime, formatDatetime, getTimeDifference} from '../utils/date.js';
 
-const TIME = {
-  HOURS: 24,
-  MINUTES: 60
-};
 const OFFERS_DISPLAY_COUNT = 3;
-
-const getTimeDifference = (dateStart, dateEnd) => {
-  let hoursDifference = dateEnd.getHours() - dateStart.getHours();
-  let minutesDifference = dateEnd.getMinutes() - dateStart.getMinutes();
-
-  if (dateStart.getHours() > dateEnd.getHours()) {
-    hoursDifference = 0;
-    hoursDifference = TIME.HOURS - dateStart.getHours();
-    hoursDifference = hoursDifference + dateEnd.getHours();
-  }
-
-  if (dateStart.getMinutes() > dateEnd.getMinutes()) {
-    minutesDifference = 0;
-    minutesDifference = TIME.MINUTES - dateStart.getMinutes();
-    minutesDifference = minutesDifference + dateEnd.getMinutes();
-    hoursDifference = hoursDifference - 1;
-  }
-
-  const hoursResult = hoursDifference <= 0 ? `` : `${getPureDateNumber(hoursDifference)}H`;
-  const minutesResult = minutesDifference <= 0 ? `` : `${getPureDateNumber(minutesDifference)}M`;
-
-  return `${hoursResult} ${minutesResult}`;
-};
 
 const generateOfferList = (offers) => {
   const offersList = [];
@@ -64,9 +37,9 @@ const getTripEvent = (eventData) => (
 
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${getDatetimeFull(eventData.startDate)}">${getPureHours(eventData.startDate)}:${getPureMinutes(eventData.startDate)}</time>
+          <time class="event__start-time" datetime="${formatDatetime(eventData.startDate)}">${formatTime(eventData.startDate)}</time>
           —
-          <time class="event__end-time" datetime="${getDatetimeFull(eventData.endDate)}">${getPureHours(eventData.endDate)}:${getPureMinutes(eventData.endDate)}</time>
+          <time class="event__end-time" datetime="${formatDatetime(eventData.endDate)}">${formatTime(eventData.endDate)}</time>
         </p>
         <p class="event__duration">${getTimeDifference(eventData.startDate, eventData.endDate)}</p>
       </div>

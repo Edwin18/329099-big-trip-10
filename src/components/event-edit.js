@@ -1,6 +1,9 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {getPureHours, getPureMinutes} from '../utils/date.js';
 import {destinationTowns, tripType} from '../mock/event.js';
+
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import '../../node_modules/flatpickr/dist/themes/material_blue.css';
 
 const getDestinationTownsList = () => (
   destinationTowns.map((town) => (
@@ -85,12 +88,12 @@ const getTripEditEvent = (eventData) => (
             <label class="visually-hidden" for="event-start-time-1">
             From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 ${getPureHours(eventData.startDate)}:${getPureMinutes(eventData.startDate)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${new Date()}">
             —
             <label class="visually-hidden" for="event-end-time-1">
             To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 ${getPureHours(eventData.endDate)}:${getPureMinutes(eventData.endDate)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${new Date()}">
           </div>
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
@@ -142,6 +145,10 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._submitHandler = null;
     this._favoriteButtonClickHandler = null;
     this._selectTypeClickHandler = null;
+
+    this._flatpickr = null;
+
+    this._applyFlatpickr();
   }
 
   getTemplate() {
@@ -153,6 +160,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.setSubmitHandler(this._submitHandler);
     this.setFavoriteButtonClickHandler(this._favoriteButtonClickHandler);
     this.setSelectTypeClickHandler(this._selectTypeClickHandler);
+    this._applyFlatpickr();
   }
 
   setCloseButtonClickHandler(handler) {
@@ -178,5 +186,28 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.getElement().querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
       handler(evt);
     });
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
+    const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
+
+    const flatpickrInit = (dateElement, date) => {
+      this._flatpickr = flatpickr(dateElement, {
+        altInput: true,
+        allowInput: true,
+        enableTime: true,
+        altFormat: `d/m/Y H:i`,
+        defaultDate: date
+      });
+    };
+
+    flatpickrInit(startDateElement, this._eventData.startDate);
+    flatpickrInit(endDateElement, this._eventData.endDate);
   }
 }

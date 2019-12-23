@@ -1,12 +1,12 @@
 import AbstractComponent from './abstract-component.js';
-import {getMonthString} from '../utils/date.js';
+import {formatTimeMonth} from '../utils/date.js';
 
 const getTripInfoDate = (data) => {
   const lastIndex = data.length - 1;
   const lastDayDate = data[lastIndex].dayDate;
   const firstDayDate = data[0].dayDate;
 
-  return `${getMonthString(firstDayDate)} ${firstDayDate.getDate()}&nbsp;—&nbsp;${lastDayDate.getDate() + lastIndex}`;
+  return `${formatTimeMonth(firstDayDate)}&nbsp;—&nbsp;${formatTimeMonth(lastDayDate)}`;
 };
 
 const getTripInfoTitle = (data) => {
