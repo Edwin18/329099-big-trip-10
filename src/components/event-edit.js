@@ -1,5 +1,4 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {getPureHours, getPureMinutes} from '../utils/date.js';
 import {destinationTowns, tripType} from '../mock/event.js';
 
 import flatpickr from 'flatpickr';
@@ -89,12 +88,12 @@ const getTripEditEvent = (eventData) => (
             <label class="visually-hidden" for="event-start-time-1">
             From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 ${getPureHours(eventData.startDate)}:${getPureMinutes(eventData.startDate)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${new Date()}">
             —
             <label class="visually-hidden" for="event-end-time-1">
             To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 ${getPureHours(eventData.endDate)}:${getPureMinutes(eventData.endDate)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${new Date()}">
           </div>
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
