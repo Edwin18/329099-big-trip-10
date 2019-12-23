@@ -27,7 +27,11 @@ export const getTimeDifference = (start, end) => {
   const hours = duration.get(`hours`);
   const minutes = duration.get(`minutes`);
 
-  return `${days <= 0 ? `` : `${days}D`} ${hours <= 0 ? `` : `${hours}H`} ${minutes <= 0 ? `` : `${minutes}M`}`;
+  const getDays = days <= 0 ? `` : `${days < 10 ? `0${days}D` : `${days}D`}`;
+  const getHours = hours <= 0 ? `` : `${hours < 10 ? `0${hours}H` : `${hours}H`}`;
+  const getMinutes = minutes <= 0 ? `` : `${minutes < 10 ? `0${minutes}M` : `${minutes}M`}`;
+
+  return `${getDays} ${getHours} ${getMinutes}`;
 };
 
 export const getRandomDateTime = () => {
