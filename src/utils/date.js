@@ -1,11 +1,14 @@
 import {getRandomIntegerNumber} from './common.js';
 import moment from 'moment';
 
+const DAYS = {
+  MIN: 0,
+  MAX: 5
+};
 const HOURS = {
   MIN: 0,
   MAX: 5
 };
-
 const MINUTES = {
   MIN: 0,
   MAX: 59
@@ -34,13 +37,28 @@ export const getTimeDifference = (start, end) => {
   return `${getDays} ${getHours} ${getMinutes}`;
 };
 
-export const getRandomDateTime = () => {
+export const getRandomEndDate = () => {
   const date = new Date();
   const randomHours = getRandomIntegerNumber(HOURS.MIN, HOURS.MAX);
   const randomMinutes = getRandomIntegerNumber(MINUTES.MIN, MINUTES.MAX);
+  const randomDays = getRandomIntegerNumber(DAYS.MIN, DAYS.MAX);
 
+  date.setDate(date.getDate() + randomDays);
   date.setHours(date.getHours() + randomHours);
   date.setMinutes(date.getMinutes() + randomMinutes);
+
+  return date;
+};
+
+export const getRandomStartDate = () => {
+  const date = new Date();
+  const randomHours = getRandomIntegerNumber(HOURS.MIN, HOURS.MAX);
+  const randomMinutes = getRandomIntegerNumber(MINUTES.MIN, MINUTES.MAX);
+  const randomDays = getRandomIntegerNumber(DAYS.MIN, DAYS.MAX);
+
+  date.setDate(date.getDate() - randomDays);
+  date.setHours(date.getHours() - randomHours);
+  date.setMinutes(date.getMinutes() - randomMinutes);
 
   return date;
 };

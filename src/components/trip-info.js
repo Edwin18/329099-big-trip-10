@@ -3,33 +3,30 @@ import {formatTimeMonth} from '../utils/date.js';
 
 const getTripInfoDate = (data) => {
   const lastIndex = data.length - 1;
-  const lastDayDate = data[lastIndex].dayDate;
-  const firstDayDate = data[0].dayDate;
 
-  return `${formatTimeMonth(firstDayDate)}&nbsp;—&nbsp;${formatTimeMonth(lastDayDate)}`;
+  return `${formatTimeMonth(data[0].startDate)}&nbsp;—&nbsp;${formatTimeMonth(data[lastIndex].endDate)}`;
 };
 
 const getTripInfoTitle = (data) => {
   const lastIndex = data.length - 1;
-  const dayInfo = data[lastIndex].dayInfo;
 
-  return `${data[0].dayInfo[0].moveTo} — ... — ${dayInfo[dayInfo.length - 1].moveTo}`;
+  return `${data[0].moveTo} — ... — ${data[lastIndex].moveTo}`;
 };
 
-const getTripInfoElement = (data) => (
+const getTripInfoElement = (pointsData) => (
   `<div class="trip-info__main">
-    <h1 class="trip-info__title">${getTripInfoTitle(data)}</h1>
-    <p class="trip-info__dates">${getTripInfoDate(data)}</p>
+    <h1 class="trip-info__title">${getTripInfoTitle(pointsData)}</h1>
+    <p class="trip-info__dates">${getTripInfoDate(pointsData)}</p>
   </div>`
 );
 
 export default class TripInfoComponent extends AbstractComponent {
-  constructor(data) {
+  constructor(pointsData) {
     super();
-    this._data = data;
+    this._pointsData = pointsData;
   }
 
   getTemplate() {
-    return getTripInfoElement(this._data);
+    return getTripInfoElement(this._pointsData);
   }
 }
