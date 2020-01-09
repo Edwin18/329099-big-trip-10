@@ -3,7 +3,7 @@ import Points from './models/points.js';
 import {RenderPosition, render} from './utils/render.js';
 import TripInfoComponent from './components/trip-info.js';
 import ControlsComponent from './components/controls.js';
-import FilterComponent from './components/filter.js';
+import FilterController from './controllers/filter.js';
 import TripController from './controllers/trip.js';
 
 const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
@@ -14,9 +14,11 @@ const data = generateTrips();
 const pointsModel = new Points();
 pointsModel.setPoints(data);
 
-render(tripInfoElement, new TripInfoComponent(pointsModel.getPoints()).getElement(), RenderPosition.AFTERBEGIN);
+render(tripInfoElement, new TripInfoComponent(pointsModel.getPointsAll()).getElement(), RenderPosition.AFTERBEGIN);
 render(tripControlsElement, new ControlsComponent().getElement(), RenderPosition.AFTERBEGIN);
-render(tripControlsElement, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
+
+const filterController = new FilterController(tripControlsElement, pointsModel);
+filterController.render();
 
 const eventsController = new TripController(tripEventsElement, pointsModel);
 eventsController.render();

@@ -1,5 +1,5 @@
 import {tripType} from '../mock/event.js';
-import {replace, render, RenderPosition} from '../utils/render.js';
+import {replace, render, remove, RenderPosition} from '../utils/render.js';
 import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 
@@ -41,6 +41,12 @@ export default class PointController {
       this._replaceEditToEvent();
       this._viewMode = VIEW_MODE.DEFAULT;
     }
+  }
+
+  destroy() {
+    remove(this._eventEditComponent);
+    remove(this._eventComponent);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   _mainRender(preEventData) {

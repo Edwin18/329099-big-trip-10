@@ -19,10 +19,13 @@ export default class TripController {
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
+
+    this._pointsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
-    const points = this._pointsModel.getPoints();
+    const points = this._pointsModel.getPointsAll();
 
     // Рендер заглушки если дата не пришла, пока что сделал так
     if (!points) {
@@ -90,7 +93,7 @@ export default class TripController {
   }
 
   _onDataChange(oldComponent, pointController, oldData, newData) {
-    const isSuccess = this._pointsModel.updateTask(oldData.id, newData);
+    const isSuccess = this._pointsModel.updatePoint(oldData.id, newData);
 
     if (isSuccess) {
       pointController.reRender(newData, oldComponent);
@@ -99,5 +102,24 @@ export default class TripController {
 
   _onViewChange() {
     this._showedPointControllers.forEach((it) => (it.setDefaultView()));
+  }
+
+  _onFilterChange() {
+    this._updatePoints();
+  }
+
+  _updatePoints() {
+    this._removePoints();
+    remove(this._daysListComponent);
+
+    if (this._pointsModel.getPoints().length !== 0) {
+      render(this._container, this._daysListComponent.getElement(), RenderPosition.BEFOREEND);
+      this._renderDays(this._daysListComponent.getElement(), this._pointsModel.getPoints());
+    }
+  }
+
+  _removePoints() {
+    this._showedPointControllers.forEach((pointController) => pointController.destroy());
+    this._showedPointControllers = [];
   }
 }
