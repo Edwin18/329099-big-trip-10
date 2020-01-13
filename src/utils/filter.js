@@ -24,7 +24,7 @@ const getPastPoints = (points, nowDate) => {
   return resultPoints;
 };
 
-export const getTasksByFilter = (points, filterType) => {
+export const getPointsByFilter = (points, filterType) => {
   const nowDate = new Date();
 
   switch (filterType) {

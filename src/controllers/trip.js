@@ -7,9 +7,12 @@ import EmptyDayComponent from '../components/empty-day.js';
 import PointController from './point.js';
 
 export default class TripController {
-  constructor(container, pointsModel) {
+  constructor(container, pointsModel, offersModel, destinationsModel, api) {
     this._container = container;
     this._pointsModel = pointsModel;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
+    this._api = api;
 
     this._showedPointControllers = [];
     this._stubComponent = new StubComponent();
@@ -47,11 +50,11 @@ export default class TripController {
           this._renderDays(this._daysListComponent.getElement(), points);
           break;
         case SORT_TYPE.TIME:
-          sortedData = points.slice().sort((a, b) => (b.endDate.getTime() - b.startDate.getTime()) - (a.endDate.getTime() - a.startDate.getTime()));
+          sortedData = points.slice().sort((a, b) => (b.date_to.getTime() - b.date_from.getTime()) - (a.date_to.getTime() - a.date_from.getTime()));
           this._renderSortedEvents(sortedData);
           break;
         case SORT_TYPE.PRICE:
-          sortedData = points.slice().sort((a, b) => b.price - a.price);
+          sortedData = points.slice().sort((a, b) => b.base_price - a.base_price);
           this._renderSortedEvents(sortedData);
           break;
       }
@@ -85,7 +88,7 @@ export default class TripController {
 
   _renderEvent(container, pointsData) {
     pointsData.forEach((pointData) => {
-      const pointController = new PointController(container, this._onDataChange, this._onViewChange);
+      const pointController = new PointController(container, this._onDataChange, this._onViewChange, this._offersModel, this._destinationsModel);
       pointController.render(pointData);
 
       this._showedPointControllers.push(pointController);

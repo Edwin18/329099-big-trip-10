@@ -28,12 +28,6 @@ export const tripType = [
     {text: `Restaurant`, name: `restaurant`}
   ]}
 ];
-export const destinationTowns = [
-  `Amsterdam`,
-  `Geneva`,
-  `Chamonix`,
-  `Saint Petersburg`
-];
 const tripDescriptionList = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
@@ -80,7 +74,6 @@ const getRandomTripType = () => {
 const generateTrip = (index) => ({
   id: index + 1,
   type: getRandomTripType(),
-  moveTo: destinationTowns[getRandomIntegerNumber(0, destinationTowns.length)],
   startDate: getRandomStartDate(),
   endDate: getRandomEndDate(),
   price: getRandomIntegerNumber(PRICE.MIN, PRICE.MAX),

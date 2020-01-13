@@ -1,32 +1,46 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {destinationTowns, tripType} from '../mock/event.js';
-
+import {tripType} from '../mock/event.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import '../../node_modules/flatpickr/dist/themes/material_blue.css';
 
-const getDestinationTownsList = () => (
+const getOffersClassName = (string) => {
+  return string.slice().toLowerCase().replace(/ /g, `-`);
+};
+
+const getDestinationTownsList = (destinationTowns) => (
   destinationTowns.map((town) => (
-    `<option value="${town}"></option>`
+    `<option value="${town.name}"></option>`
   ))
   .join(`\n`)
 );
 
 const getImgList = (aboutImg) => (
-  aboutImg.map((url) => (`<img class="event__photo" src="${url}" alt="Event photo">`))
+  aboutImg.map((img) => (
+    `<img class="event__photo" src="${img.src}" alt="${img.description}">`
+  ))
   .join(`\n`)
+);
+
+const getOffersContainer = (eventData) => (
+  `${eventData.offers.length ? `<section class="event__section  event__section--offers">
+                                  <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+                                  <div class="event__available-offers">
+                                    ${getOffersList(eventData.offers)}
+                                  </div>
+                                </section>` : ``}`
 );
 
 const getOffersList = (offers) => (
   offers.map((elem) => (
     `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${elem.name}-1" type="checkbox" name="event-offer-${elem.name}" ${elem.checked ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${elem.name}-1">
-          <span class="event__offer-title">${elem.text}</span>
-          +
-          €&nbsp;<span class="event__offer-price">${elem.price}</span>
-        </label>
-      </div>`
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getOffersClassName(elem.title)}-1" type="checkbox" name="event-offer-${getOffersClassName(elem.title)}">
+      <label class="event__offer-label" for="event-offer-${getOffersClassName(elem.title)}-1">
+        <span class="event__offer-title">${elem.title}</span>
+        +
+        €&nbsp;<span class="event__offer-price">${elem.price}</span>
+      </label>
+    </div>`
   ))
   .join(`\n`)
 );
@@ -61,7 +75,7 @@ const getEventTypeList = (curentType) => (
   .join(`\n`)
 );
 
-const getTripEditEvent = (eventData) => (
+const getTripEditEvent = (eventData, destinationDatalist) => (
   `<li class="trip-events__item">
       <form class="event  event--edit" action="#" method="post">
         <header class="event__header">
@@ -79,9 +93,9 @@ const getTripEditEvent = (eventData) => (
             <label class="event__label  event__type-output" for="event-destination-1">
             Sightseeing at
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${eventData.moveTo} list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${eventData.destination.name} list="destination-list-1">
             <datalist id="destination-list-1">
-              ${getDestinationTownsList()}
+              ${getDestinationTownsList(destinationDatalist)}
             </datalist>
           </div>
           <div class="event__field-group  event__field-group--time">
@@ -100,11 +114,11 @@ const getTripEditEvent = (eventData) => (
             <span class="visually-hidden">Price</span>
             €
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${eventData.price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${eventData.base_price}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${eventData.favorite ? `checked` : ``}>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${eventData.is_favorite ? `checked` : ``}>
           <label class="event__favorite-btn" for="event-favorite-1">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -116,18 +130,13 @@ const getTripEditEvent = (eventData) => (
           </button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            <div class="event__available-offers">
-              ${getOffersList(eventData.offers)}
-            </div>
-          </section>
+          ${getOffersContainer(eventData)}
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${eventData.aboutText}</p>
+            <p class="event__destination-description">${eventData.destination.description}</p>
             <div class="event__photos-container">
               <div class="event__photos-tape">
-                ${getImgList(eventData.aboutImg)}
+                ${getImgList(eventData.destination.pictures)}
               </div>
             </div>
           </section>
@@ -136,15 +145,27 @@ const getTripEditEvent = (eventData) => (
   </li>`
 );
 
+const parseFormData = (formData) => {
+  return {
+    moveTo: formData.get(`event-destination`),
+    startDate: formData.get(`event-start-time`),
+    endDate: formData.get(`event-end-time`),
+    price: formData.get(`event-price`),
+  };
+};
+
 export default class EventEditComponent extends AbstractSmartComponent {
-  constructor(eventData) {
+  constructor(eventData, destinationDatalist) {
     super();
     this._eventData = eventData;
+    this._destinationDatalist = destinationDatalist;
 
     this._closeButtonClickHandler = null;
     this._submitHandler = null;
     this._favoriteButtonClickHandler = null;
     this._selectTypeClickHandler = null;
+    this._deleteButtonClickHandler = null;
+    this._selectDestinationInputHandler = null;
 
     this._flatpickr = null;
 
@@ -152,14 +173,16 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return getTripEditEvent(this._eventData);
+    return getTripEditEvent(this._eventData, this._destinationDatalist);
   }
 
   recoveryListeners() {
     this.setCloseButtonClickHandler(this._closeButtonClickHandler);
     this.setSubmitHandler(this._submitHandler);
-    this.setFavoriteButtonClickHandler(this._favoriteButtonClickHandler);
+    this.setFavoriteButtonChangeHandler(this._favoriteButtonClickHandler);
     this.setSelectTypeClickHandler(this._selectTypeClickHandler);
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
+    this.setSelectDestinationInputHandler(this._selectDestinationInputHandler);
     this._applyFlatpickr();
   }
 
@@ -173,7 +196,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
   }
 
-  setFavoriteButtonClickHandler(handler) {
+  setFavoriteButtonChangeHandler(handler) {
     this._favoriteButtonClickHandler = handler;
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, () => {
       handler();
@@ -186,6 +209,27 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.getElement().querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
       handler(evt);
     });
+  }
+
+  setDeleteButtonClickHandler(handler) {
+    this._deleteButtonClickHandler = handler;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, (evt) => {
+      handler(evt);
+    });
+  }
+
+  setSelectDestinationInputHandler(handler) {
+    this._selectDestinationInputHandler = handler;
+    this.getElement().querySelector(`#event-destination-1`).addEventListener(`input`, (evt) => {
+      handler(evt, this._destinationDatalist);
+    });
+  }
+
+  getData() {
+    const form = this.getElement().querySelector(`form`);
+    const formData = new FormData(form);
+
+    return parseFormData(formData);
   }
 
   _applyFlatpickr() {
