@@ -1,6 +1,9 @@
 import {replace, render, remove, RenderPosition} from '../utils/render.js';
+import {getCurrentPreInputText} from '../utils/common.js';
 import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
+import OffersComponent from '../components/offers.js';
+import DestinationsComponent from '../components/destinations.js';
 
 const VIEW_MODE = {
   DEFAULT: `default`,
@@ -23,6 +26,7 @@ export default class PointController {
     this._replaceEditToEvent = this._replaceEditToEvent.bind(this);
     this._replaceEventToEdit = this._replaceEventToEdit.bind(this);
     this._deleteElement = this._deleteElement.bind(this);
+    this._setFavorite = this._setFavorite.bind(this);
     this._chooseTripType = this._chooseTripType.bind(this);
     this._chooseDestination = this._chooseDestination.bind(this);
 
@@ -59,7 +63,7 @@ export default class PointController {
 
   _mainRender(preEventData) {
     this._eventComponent = new EventComponent(preEventData);
-    this._eventEditComponent = new EventEditComponent(preEventData, this._destinationsModel.getDestinations());
+    this._eventEditComponent = new EventEditComponent(preEventData, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
 
     this._eventComponent.setEditButtonClickHandler(this._replaceEventToEdit);
 
@@ -67,29 +71,41 @@ export default class PointController {
     this._eventEditComponent.setDeleteButtonClickHandler(this._deleteElement);
     this._eventEditComponent.setSelectTypeClickHandler(this._chooseTripType);
     this._eventEditComponent.setSelectDestinationInputHandler(this._chooseDestination);
-    this._eventEditComponent.setFavoriteButtonChangeHandler(() => {
-      this._onDataChange(this._eventEditComponent, this, preEventData, Object.assign({}, preEventData, {
-        favorite: !preEventData.favorite
-      }));
-    });
+    this._eventEditComponent.setFavoriteButtonChangeHandler(this._setFavorite, this._eventEditComponent);
+    // Тут мне нужно передавать значение сразу на сервер!!!
+    // this._onDataChange(this._eventEditComponent, this, preEventData, Object.assign({}, preEventData, {
+    //   favorite: !preEventData.favorite
+    // }));
+
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
-      const data = this._eventEditComponent.getData();
-      this._onDataChange(this._eventEditComponent, this, preEventData, data);
+      const data = this._eventEditComponent.getData(preEventData);
+      console.log(`Данные с сервера`);
+      console.log(preEventData);
+      console.log(`Данные которые мне нужно отправить на сервер`);
+      console.log(data);
     });
   }
 
   _chooseDestination(evt, destinationList) {
     const currentDestination = destinationList.find((elem) => (elem.name === evt.target.value));
+    const destinationContainerElement = this._eventEditComponent.getElement().querySelector(`.event__details`);
+    const currentDestinationListElement = destinationContainerElement.querySelector(`.event__section--destination`);
 
-    if (currentDestination !== undefined) {
-      this._onDataChange(this._eventEditComponent, this, this._eventData, Object.assign({}, this._eventData, {
-        destination: currentDestination
-      }));
+    if (!currentDestination) {
+      return;
     }
+
+    if (currentDestinationListElement) {
+      currentDestinationListElement.remove();
+    }
+
+    const destinationsElement = new DestinationsComponent(currentDestination).getElement();
+
+    render(destinationContainerElement, destinationsElement, RenderPosition.BEFOREEND);
   }
 
-  _chooseTripType(evt) {
+  _chooseTripType(evt, offersList) {
     const target = evt.target;
 
     if (target.tagName !== `LABEL`) {
@@ -97,17 +113,32 @@ export default class PointController {
     }
 
     const typeImgElement = this._eventEditComponent.getElement().querySelector(`.event__type-icon`);
+    const offersContainerElement = this._eventEditComponent.getElement().querySelector(`.event__details`);
+    const currentOffersListElement = offersContainerElement.querySelector(`.event__section--offers`);
+    const tripToggleElement = this._eventEditComponent.getElement().querySelector(`#event-type-toggle-1`);
+    const tripTypeNameElement = this._eventEditComponent.getElement().querySelector(`.event__type-output`);
     const tripTypeName = target.parentNode.firstElementChild.value;
-    const offersData = this._offersModel.getOffers();
+    const currentOffer = offersList.find((elem) => (elem.type === tripTypeName));
+
+    if (tripToggleElement.value === tripTypeName) {
+      return;
+    }
+
+    if (currentOffersListElement) {
+      currentOffersListElement.remove();
+    }
 
     typeImgElement.src = `img/icons/${tripTypeName}.png`;
+    tripToggleElement.value = tripTypeName;
+    tripTypeNameElement.innerText = getCurrentPreInputText(tripTypeName);
 
-    const currentOffer = offersData.find((elem) => (elem.type === tripTypeName));
+    if (currentOffer.offers.length === 0) {
+      return;
+    }
 
-    this._onDataChange(this._eventEditComponent, this, this._eventData, Object.assign({}, this._eventData, {
-      type: currentOffer.type,
-      offers: currentOffer.offers
-    }));
+    const offersElement = new OffersComponent(currentOffer).getElement();
+
+    render(offersContainerElement, offersElement, RenderPosition.AFTERBEGIN);
   }
 
   _replaceEditToEvent() {
@@ -140,7 +171,14 @@ export default class PointController {
     }
   }
 
-  _deleteElement(evt) {
+  _deleteElement(evt, eventData) {
     evt.preventDefault();
+    console.log(eventData);
+  }
+
+  _setFavorite(component) {
+    const favoriteValue = component.getElement().querySelector(`#event-favorite-1`);
+    console.log(`Помечен как избранное?`);
+    console.log(favoriteValue.checked);
   }
 }

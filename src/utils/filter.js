@@ -1,10 +1,11 @@
 import {FilterType} from '../const.js';
+import moment from 'moment';
 
 const getFuturePoints = (points, nowDate) => {
   const resultPoints = [];
 
   points.forEach((point) => {
-    if (point.startDate.getTime() > nowDate.getTime()) {
+    if (moment(point.date_from).valueOf() > moment(nowDate).valueOf()) {
       resultPoints.push(point);
     }
   });
@@ -16,7 +17,7 @@ const getPastPoints = (points, nowDate) => {
   const resultPoints = [];
 
   points.forEach((point) => {
-    if (point.endDate.getTime() < nowDate.getTime()) {
+    if (moment(point.date_to).valueOf() < moment(nowDate).valueOf()) {
       resultPoints.push(point);
     }
   });

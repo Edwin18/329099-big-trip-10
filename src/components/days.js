@@ -5,7 +5,7 @@ const getTripDayInfo = (pointsData) => (
   `<li class="trip-days__item  day">
     <div class="day__info">
       <span class="day__counter">1</span>
-      <time class="day__date" datetime="${formatDatetime(pointsData[0].startDate)}">${formatTimeMonth(pointsData[0].startDate)}</time>
+      <time class="day__date" datetime="${formatDatetime(pointsData[0].date_from)}">${formatTimeMonth(pointsData[0].date_from)}</time>
     </div>
     <ul class="trip-events__list"></ul>
   </li>`

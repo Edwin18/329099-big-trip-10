@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import {formatTime, formatDatetime, getTimeDifference} from '../utils/date.js';
+import {getCurrentPreInputText} from '../utils/common.js';
 
 const OFFERS_DISPLAY_COUNT = 3;
 
@@ -33,7 +34,7 @@ const getTripEvent = (eventData) => (
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${eventData.type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${eventData.destination.name} to ${eventData.type}</h3>
+      <h3 class="event__title">${getCurrentPreInputText(eventData.type)} ${eventData.destination.name}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
