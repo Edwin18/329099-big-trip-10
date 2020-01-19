@@ -1,35 +1,14 @@
 import AbstractComponent from './abstract-component.js';
-import {formatTimeMonth} from '../utils/date.js';
 
-const getTripInfoDate = (data) => {
-  const lastIndex = data.length - 1;
-  const lastDayDate = data[lastIndex].dayDate;
-  const firstDayDate = data[0].dayDate;
-
-  return `${formatTimeMonth(firstDayDate)}&nbsp;—&nbsp;${formatTimeMonth(lastDayDate)}`;
-};
-
-const getTripInfoTitle = (data) => {
-  const lastIndex = data.length - 1;
-  const dayInfo = data[lastIndex].dayInfo;
-
-  return `${data[0].dayInfo[0].moveTo} — ... — ${dayInfo[dayInfo.length - 1].moveTo}`;
-};
-
-const getTripInfoElement = (data) => (
+const getTripInfoElement = () => (
   `<div class="trip-info__main">
-    <h1 class="trip-info__title">${getTripInfoTitle(data)}</h1>
-    <p class="trip-info__dates">${getTripInfoDate(data)}</p>
+    <h1 class="trip-info__title"></h1>
+    <p class="trip-info__dates"></p>
   </div>`
 );
 
 export default class TripInfoComponent extends AbstractComponent {
-  constructor(data) {
-    super();
-    this._data = data;
-  }
-
   getTemplate() {
-    return getTripInfoElement(this._data);
+    return getTripInfoElement(this._pointsData);
   }
 }

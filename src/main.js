@@ -1,39 +1,40 @@
-import {generateDays} from './mock/event.js';
+import API from './api.js';
+import Points from './models/points.js';
+import Offers from './models/offers.js';
+import Destinations from './models/destinations.js';
 import {RenderPosition, render} from './utils/render.js';
-import TripInfoComponent from './components/trip-info.js';
 import ControlsComponent from './components/controls.js';
-import FilterComponent from './components/filter.js';
+import TripInfoController from './controllers/trip-info.js';
+import FilterController from './controllers/filter.js';
 import TripController from './controllers/trip.js';
+
+const AUTHORIZATION = `Basic dXNlckBwYXzdD29yZsAo=`;
+const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
+
+const api = new API(END_POINT, AUTHORIZATION);
+const pointsModel = new Points();
+const offersModel = new Offers();
+const destinationsModel = new Destinations();
 
 const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
 const tripControlsElement = document.querySelector(`.trip-controls`);
 const tripEventsElement = document.querySelector(`.trip-events`);
-const data = generateDays();
 
-render(tripInfoElement, new TripInfoComponent(data).getElement(), RenderPosition.AFTERBEGIN);
 render(tripControlsElement, new ControlsComponent().getElement(), RenderPosition.AFTERBEGIN);
-render(tripControlsElement, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
 
-const eventsController = new TripController(tripEventsElement);
-eventsController.render(data);
+const tripInfoController = new TripInfoController(tripInfoElement, pointsModel);
+const filterController = new FilterController(tripControlsElement, pointsModel);
+const tripController = new TripController(tripEventsElement, pointsModel, offersModel, destinationsModel, api);
 
-// Тестовые скрипты, пусть пока что побудут тут)
-const getTotalPrice = () => {
-  const totalPriceElement = document.querySelector(`.trip-info__cost-value`);
-  let totalPrice = 0;
+filterController.render();
+tripInfoController.render();
 
-  data.forEach((day) => {
-    day.dayInfo.forEach((event) => {
-      totalPrice = totalPrice + event.price;
-      event.offers.forEach((offer) => {
-        if (offer.checked) {
-          totalPrice = totalPrice + offer.price;
-        }
-      });
-    });
+Promise.all([api.getDestinations(), api.getOffers(), api.getPoints()])
+  .then((values) => {
+    const [destinations, offers, points] = values;
+    destinationsModel.setDestinations(destinations);
+    offersModel.setOffers(offers);
+    pointsModel.setPoints(points);
+    tripInfoController.updateTripInfo();
+    tripController.render();
   });
-
-  totalPriceElement.innerText = totalPrice;
-};
-
-getTotalPrice();

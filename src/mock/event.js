@@ -1,8 +1,7 @@
 import {getRandomIntegerNumber, getRandomArr, getBoolean} from '../utils/common.js';
-import {getRandomDateTime} from '../utils/date.js';
+import {getRandomEndDate, getRandomStartDate} from '../utils/date.js';
 
 const TRIP_COUNT = 10;
-const DAY_COUNT = 1;
 const URL_COUNT = 5;
 const DESCRIPTION_COUNT = {
   MIN: 1,
@@ -28,12 +27,6 @@ export const tripType = [
     {text: `Sightseeing`, name: `sightseeing`},
     {text: `Restaurant`, name: `restaurant`}
   ]}
-];
-export const destinationTowns = [
-  `Amsterdam`,
-  `Geneva`,
-  `Chamonix`,
-  `Saint Petersburg`
 ];
 const tripDescriptionList = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -78,11 +71,11 @@ const getRandomTripType = () => {
   return randomTypeList.list[getRandomIntegerNumber(0, randomTypeList.list.length)].name;
 };
 
-const generateTrip = () => ({
+const generateTrip = (index) => ({
+  id: index + 1,
   type: getRandomTripType(),
-  moveTo: destinationTowns[getRandomIntegerNumber(0, destinationTowns.length)],
-  startDate: new Date(),
-  endDate: getRandomDateTime(),
+  startDate: getRandomStartDate(),
+  endDate: getRandomEndDate(),
   price: getRandomIntegerNumber(PRICE.MIN, PRICE.MAX),
   offers: generateOffers(),
   aboutText: getRandomArr(DESCRIPTION_COUNT.MIN, DESCRIPTION_COUNT.MAX, tripDescriptionList).join(`\n`),
@@ -90,19 +83,10 @@ const generateTrip = () => ({
   favorite: getBoolean()
 });
 
-const generateTrips = () => (
+export const generateTrips = () => (
   new Array(TRIP_COUNT)
     .fill(``)
-    .map(generateTrip)
-);
-
-export const generateDays = () => (
-  new Array(DAY_COUNT)
-    .fill(``)
-    .map((elem, index) => ({
-      day: index + 1,
-      dayInfo: generateTrips(),
-      dayDate: new Date()
-    })
-    )
+    .map((elem, index) => (
+      generateTrip(index)
+    ))
 );

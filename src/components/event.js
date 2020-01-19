@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import {formatTime, formatDatetime, getTimeDifference} from '../utils/date.js';
+import {getCurrentPreInputText} from '../utils/common.js';
 
 const OFFERS_DISPLAY_COUNT = 3;
 
@@ -33,19 +34,19 @@ const getTripEvent = (eventData) => (
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${eventData.type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${eventData.moveTo} to ${eventData.type}</h3>
+      <h3 class="event__title">${getCurrentPreInputText(eventData.type)} ${eventData.destination.name}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${formatDatetime(eventData.startDate)}">${formatTime(eventData.startDate)}</time>
+          <time class="event__start-time" datetime="${formatDatetime(eventData.date_from)}">${formatTime(eventData.date_from)}</time>
           —
-          <time class="event__end-time" datetime="${formatDatetime(eventData.endDate)}">${formatTime(eventData.endDate)}</time>
+          <time class="event__end-time" datetime="${formatDatetime(eventData.date_to)}">${formatTime(eventData.date_to)}</time>
         </p>
-        <p class="event__duration">${getTimeDifference(eventData.startDate, eventData.endDate)}</p>
+        <p class="event__duration">${getTimeDifference(eventData.date_from, eventData.date_to)}</p>
       </div>
 
       <p class="event__price">
-        €&nbsp;<span class="event__price-value">${eventData.price}</span>
+        €&nbsp;<span class="event__price-value">${eventData.base_price}</span>
       </p>
 
       <h4 class="visually-hidden">Offers:</h4>

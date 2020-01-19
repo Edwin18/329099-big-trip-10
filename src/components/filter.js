@@ -1,6 +1,12 @@
 import AbstractComponent from './abstract-component.js';
 import {filters} from '../mock/filter.js';
 
+const FILTER_ID_PREFIX = `filter-`;
+
+const getFilterNameById = (id) => {
+  return id.substring(FILTER_ID_PREFIX.length);
+};
+
 const generateFilters = () => (
   filters.map((elem) => (
     `<div class="trip-filters__filter">
@@ -21,5 +27,12 @@ const getTripFilter = () => (
 export default class FilterComponent extends AbstractComponent {
   getTemplate() {
     return getTripFilter();
+  }
+
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`change`, (evt) => {
+      const filterName = getFilterNameById(evt.target.id);
+      handler(filterName);
+    });
   }
 }
