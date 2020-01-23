@@ -24,7 +24,7 @@ render(tripControlsElement, new ControlsComponent().getElement(), RenderPosition
 
 const tripInfoController = new TripInfoController(tripInfoElement, pointsModel);
 const filterController = new FilterController(tripControlsElement, pointsModel);
-const tripController = new TripController(tripEventsElement, pointsModel, offersModel, destinationsModel, api);
+const tripController = new TripController(tripEventsElement, pointsModel, offersModel, destinationsModel);
 
 filterController.render();
 tripInfoController.render();

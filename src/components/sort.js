@@ -52,6 +52,11 @@ export default class SortComponent extends AbstractComponent {
     return getTripSort();
   }
 
+  setDefaultSortType() {
+    this._currenSortType = SORT_TYPE.DEFAULT;
+    this.getElement().querySelector(`#sort-event`).checked = 1;
+  }
+
   setSortTypeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       const sortType = evt.target.dataset.sortType;
