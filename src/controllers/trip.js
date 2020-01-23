@@ -128,6 +128,7 @@ export default class TripController {
 
     switch (sortType) {
       case SORT_TYPE.DEFAULT:
+        this._sortComponent.removeDirection();
         remove(this._daysListComponent);
         remove(this._emptyDayComponent);
         render(this._container, this._daysListComponent.getElement(), RenderPosition.BEFOREEND);
@@ -136,10 +137,14 @@ export default class TripController {
       case SORT_TYPE.TIME:
         sortedData = this._pointsModel.getPoints().slice().sort((a, b) => (moment(b.date_to).valueOf() - moment(b.date_from).valueOf()) - (moment(a.date_to).valueOf() - moment(a.date_from).valueOf()));
         this._renderSortedEvents(sortedData);
+        this._sortComponent.removeDirection();
+        this._sortComponent.setDirection(SORT_TYPE.TIME);
         break;
       case SORT_TYPE.PRICE:
         sortedData = this._pointsModel.getPoints().slice().sort((a, b) => b.base_price - a.base_price);
         this._renderSortedEvents(sortedData);
+        this._sortComponent.removeDirection();
+        this._sortComponent.setDirection(SORT_TYPE.PRICE);
         break;
     }
   }
@@ -202,6 +207,7 @@ export default class TripController {
   }
 
   _updatePoints() {
+    this._sortComponent.removeDirection();
     this._sortComponent.setDefaultSortType();
     this._removePoints();
     remove(this._daysListComponent);
