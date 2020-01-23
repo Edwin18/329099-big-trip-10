@@ -10,6 +10,8 @@ export const getRandomArr = (min, max, arr) => (
     .map(() => (arr[getRandomIntegerNumber(0, arr.length)]))
 );
 
+export const reducer = (sum, current) => sum + current;
+
 export const getCurrentPreInputText = (currentType) => {
   let result = ``;
 

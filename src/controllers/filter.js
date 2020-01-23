@@ -13,6 +13,14 @@ export default class FilterController {
     this._onFilterChange = this._onFilterChange.bind(this);
   }
 
+  hide() {
+    this._filterComponent.getElement().classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this._filterComponent.getElement().classList.remove(`visually-hidden`);
+  }
+
   render() {
     this._filterComponent = new FilterComponent();
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
