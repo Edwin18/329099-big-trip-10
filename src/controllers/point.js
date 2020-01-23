@@ -4,6 +4,9 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import OffersComponent from '../components/offers.js';
 import DestinationsComponent from '../components/destinations.js';
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import '../../node_modules/flatpickr/dist/themes/material_blue.css';
 
 const VIEW_MODE = {
   DEFAULT: `default`,
@@ -11,20 +14,25 @@ const VIEW_MODE = {
 };
 
 export default class PointController {
-  constructor(container, onDataChange, onViewChange, offersModel, destinationsModel) {
+  constructor(container, onViewChange, offersModel, destinationsModel) {
     this._container = container;
     this._eventData = null;
-    this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
 
+    this._addNewPoint = null;
+    this._addNewPointBtnElement = null;
+    this._addNewPointDayComponent = null;
+
     this._eventComponent = null;
     this._eventEditComponent = null;
 
+    this._flatpickrs = [];
+
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._replaceEditToEvent = this._replaceEditToEvent.bind(this);
-    this._replaceEventToEdit = this._replaceEventToEdit.bind(this);
+    this.replaceEventToEdit = this.replaceEventToEdit.bind(this);
     this._deleteElement = this._deleteElement.bind(this);
     this._setFavorite = this._setFavorite.bind(this);
     this._chooseTripType = this._chooseTripType.bind(this);
@@ -61,11 +69,17 @@ export default class PointController {
     }
   }
 
+  addNewPoint(addNewPointBtnElement, addNewPointDayComponent, addNewPoint) {
+    this._addNewPointDayComponent = addNewPointDayComponent;
+    this._addNewPointBtnElement = addNewPointBtnElement;
+    this._addNewPoint = addNewPoint;
+  }
+
   _mainRender(preEventData) {
     this._eventComponent = new EventComponent(preEventData);
     this._eventEditComponent = new EventEditComponent(preEventData, this._offersModel.getOffers(), this._destinationsModel.getDestinations());
 
-    this._eventComponent.setEditButtonClickHandler(this._replaceEventToEdit);
+    this._eventComponent.setEditButtonClickHandler(this.replaceEventToEdit);
 
     this._eventEditComponent.setCloseButtonClickHandler(this._replaceEditToEvent);
     this._eventEditComponent.setDeleteButtonClickHandler(this._deleteElement);
@@ -76,7 +90,6 @@ export default class PointController {
     // this._onDataChange(this._eventEditComponent, this, preEventData, Object.assign({}, preEventData, {
     //   favorite: !preEventData.favorite
     // }));
-
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       const data = this._eventEditComponent.getData(preEventData);
@@ -150,13 +163,24 @@ export default class PointController {
       replace(this._eventComponent, this._eventEditComponent);
     }
 
+    this._removeFlatpickr();
+
     this._viewMode = VIEW_MODE.DEFAULT;
   }
 
-  _replaceEventToEdit() {
-    this._onViewChange();
+  replaceEventToEdit() {
+    if (this._eventData) {
+      this._onViewChange();
+    }
 
     replace(this._eventEditComponent, this._eventComponent);
+    if (this._eventData) {
+      this._flatpickrInit(this._eventEditComponent.getElement().querySelector(`#event-start-time-1`), this._eventData.date_from);
+      this._flatpickrInit(this._eventEditComponent.getElement().querySelector(`#event-end-time-1`), this._eventData.date_to);
+    } else {
+      this._flatpickrInit(this._eventEditComponent.getElement().querySelector(`#event-start-time-1`));
+      this._flatpickrInit(this._eventEditComponent.getElement().querySelector(`#event-end-time-1`));
+    }
 
     this._viewMode = VIEW_MODE.EDIT;
 
@@ -167,18 +191,52 @@ export default class PointController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
-      this._replaceEditToEvent();
+      if (this._addNewPoint) {
+        this._addNewPointDayComponent.getElement().remove();
+        this._addNewPointDayComponent.removeElement();
+        this.destroy();
+        this._addNewPointBtnElement.disabled = false;
+        this._addNewPoint = false;
+        this._removeFlatpickr();
+      } else {
+        this._replaceEditToEvent();
+      }
     }
   }
 
   _deleteElement(evt, eventData) {
     evt.preventDefault();
-    console.log(eventData);
+    if (eventData) {
+      console.log(eventData);
+    } else {
+      this._addNewPointDayComponent.getElement().remove();
+      this._addNewPointDayComponent.removeElement();
+      this.destroy();
+      this._addNewPointBtnElement.disabled = false;
+      this._addNewPoint = false;
+      this._removeFlatpickr();
+    }
   }
 
   _setFavorite(component) {
     const favoriteValue = component.getElement().querySelector(`#event-favorite-1`);
     console.log(`Помечен как избранное?`);
     console.log(favoriteValue.checked);
+  }
+
+  _removeFlatpickr() {
+    if (this._flatpickrs.length !== 0) {
+      this._flatpickrs.forEach((elem) => elem.destroy());
+    }
+  }
+
+  _flatpickrInit(dateElement, date) {
+    this._flatpickrs.push(flatpickr(dateElement, {
+      altInput: true,
+      allowInput: true,
+      enableTime: true,
+      altFormat: `d/m/Y H:i`,
+      defaultDate: date || new Date()
+    }));
   }
 }

@@ -2,8 +2,6 @@ import API from './api.js';
 import Points from './models/points.js';
 import Offers from './models/offers.js';
 import Destinations from './models/destinations.js';
-import {RenderPosition, render} from './utils/render.js';
-import ControlsComponent from './components/controls.js';
 import TripInfoController from './controllers/trip-info.js';
 import FilterController from './controllers/filter.js';
 import TripController from './controllers/trip.js';
@@ -20,11 +18,9 @@ const tripInfoElement = document.querySelector(`.trip-main__trip-info`);
 const tripControlsElement = document.querySelector(`.trip-controls`);
 const tripEventsElement = document.querySelector(`.trip-events`);
 
-render(tripControlsElement, new ControlsComponent().getElement(), RenderPosition.AFTERBEGIN);
-
 const tripInfoController = new TripInfoController(tripInfoElement, pointsModel);
 const filterController = new FilterController(tripControlsElement, pointsModel);
-const tripController = new TripController(tripEventsElement, pointsModel, offersModel, destinationsModel, api);
+const tripController = new TripController(tripEventsElement, tripControlsElement, pointsModel, offersModel, destinationsModel, filterController);
 
 filterController.render();
 tripInfoController.render();

@@ -10,6 +10,8 @@ export const getRandomArr = (min, max, arr) => (
     .map(() => (arr[getRandomIntegerNumber(0, arr.length)]))
 );
 
+export const reducer = (sum, current) => sum + current;
+
 export const getCurrentPreInputText = (currentType) => {
   let result = ``;
 
@@ -23,3 +25,16 @@ export const getCurrentPreInputText = (currentType) => {
 
   return result;
 };
+
+export const getDefaultEventData = (eventData) => (
+  {
+    'id': eventData ? eventData.id : ``,
+    'type': eventData ? eventData.type : ``,
+    'date_from': eventData ? eventData.date_from : ``,
+    'date_to': eventData ? eventData.date_to : ``,
+    'destination': eventData ? eventData.destination : ``,
+    'base_price': eventData ? eventData.base_price : ``,
+    'is_favorite': eventData ? eventData.is_favorite : ``,
+    'offers': eventData ? eventData.offers : ``,
+  }
+);
