@@ -2,19 +2,19 @@ import AbstractComponent from './abstract-component.js';
 
 const getOffersClassName = (string) => (string.slice().toLowerCase().replace(/ /g, `-`));
 
-const getOffersContainer = (offersData) => (
-  `${offersData.offers.length ? `<section class="event__section  event__section--offers">
+const getOffersContainer = (offersList, checkedOffers) => (
+  `${offersList.length ? `<section class="event__section  event__section--offers">
                                   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                                   <div class="event__available-offers">
-                                    ${getOffersList(offersData.offers)}
+                                    ${getOffersList(offersList, checkedOffers)}
                                   </div>
                                 </section>` : ``}`
 );
 
-const getOffersList = (offers) => (
-  offers.map((elem) => (
+const getOffersList = (offersList, checkedOffers) => (
+  offersList.map((elem) => (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getOffersClassName(elem.title)}-1" type="checkbox" name="event-offer-${getOffersClassName(elem.title)}">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getOffersClassName(elem.title)}-1" type="checkbox" name="event-offer-${getOffersClassName(elem.title)}" ${checkedOffers ? isChecked(elem, checkedOffers) : ``}>
       <label class="event__offer-label" for="event-offer-${getOffersClassName(elem.title)}-1">
         <span class="event__offer-title">${elem.title}</span>
         +
@@ -25,13 +25,26 @@ const getOffersList = (offers) => (
   .join(`\n`)
 );
 
+const isChecked = (offer, checkedOffers) => {
+  let result = false;
+
+  checkedOffers.forEach((checked) => {
+    if (offer.title === checked.title) {
+      result = true;
+    }
+  });
+
+  return result ? `checked` : ``;
+};
+
 export default class OffersComponent extends AbstractComponent {
-  constructor(offersData) {
+  constructor(offersList, checkedOffers) {
     super();
-    this._offersData = offersData;
+    this._offersList = offersList;
+    this._checkedOffers = checkedOffers;
   }
 
   getTemplate() {
-    return getOffersContainer(this._offersData);
+    return getOffersContainer(this._offersList, this._checkedOffers);
   }
 }

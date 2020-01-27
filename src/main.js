@@ -6,11 +6,11 @@ import TripInfoController from './controllers/trip-info.js';
 import FilterController from './controllers/filter.js';
 import TripController from './controllers/trip.js';
 
-const AUTHORIZATION = `Basic dXNlckBwYXzdD29yZsAo=`;
+const AUTHORIZATION = `Basic dXNlckBwYXzdD249yZsAo=`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 const api = new API(END_POINT, AUTHORIZATION);
-const pointsModel = new Points();
+const pointsModel = new Points(api);
 const offersModel = new Offers();
 const destinationsModel = new Destinations();
 
@@ -20,7 +20,7 @@ const tripEventsElement = document.querySelector(`.trip-events`);
 
 const tripInfoController = new TripInfoController(tripInfoElement, pointsModel);
 const filterController = new FilterController(tripControlsElement, pointsModel);
-const tripController = new TripController(tripEventsElement, tripControlsElement, pointsModel, offersModel, destinationsModel, filterController);
+const tripController = new TripController(tripEventsElement, tripControlsElement, pointsModel, offersModel, destinationsModel, filterController, api, tripInfoController);
 
 filterController.render();
 tripInfoController.render();

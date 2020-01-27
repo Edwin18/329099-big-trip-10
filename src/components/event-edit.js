@@ -8,7 +8,7 @@ import nanoid from 'nanoid';
 
 const ID_SIZE = 4;
 
-const getOffersSection = (offersData) => (new OffersComponent(offersData).getTemplate());
+const getOffersSection = (checkedOffers, offersList) => (new OffersComponent(checkedOffers, offersList).getTemplate());
 const getDestinationSection = (destinationsData) => (new DestinationsComponent(destinationsData).getTemplate());
 
 const getDestinationTownsList = (destinationTowns) => (
@@ -48,11 +48,12 @@ const getEventTypeList = (currentType) => (
   .join(`\n`)
 );
 
-const getTripEditEvent = (eventData, destinationDatalist) => {
+const getTripEditEvent = (eventData, offersData, destinationDatalist, addNewPoint, allPointsLength) => {
   const currentEventData = getDefaultEventData(eventData);
+  const currentOffersList = eventData ? offersData.find((offer) => (offer.type === eventData.type)) : null;
   return (
-    `<li class="trip-events__item">
-      <form class="event  event--edit" action="#" method="post">
+    `<li class="trip-events__item" ${allPointsLength ? `` : `style="list-style: none;"`}>
+      <form class="${allPointsLength ? `` : `trip-events__item`} event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -89,7 +90,7 @@ const getTripEditEvent = (eventData, destinationDatalist) => {
             <span class="visually-hidden">Price</span>
             €
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${currentEventData.base_price}" required>
+            <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${currentEventData.base_price}" required>
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">${eventData ? `Save` : `Create`}</button>
           <button class="event__reset-btn" type="reset">${eventData ? `Delete` : `Cancel`}</button>
@@ -104,8 +105,8 @@ const getTripEditEvent = (eventData, destinationDatalist) => {
           <span class="visually-hidden">Open event</span>
           </button>
         </header>
-        <section class="event__details">
-          ${currentEventData ? getOffersSection(currentEventData) : ``}
+        <section class="event__details" ${addNewPoint ? `style="display: none"` : ``}>
+          ${eventData ? getOffersSection(currentOffersList.offers, currentEventData.offers) : ``}
           ${currentEventData.destination ? getDestinationSection(currentEventData.destination) : ``}
         </section>
       </form>
@@ -113,15 +114,20 @@ const getTripEditEvent = (eventData, destinationDatalist) => {
 };
 
 const getDestinationData = (destinationInput, destinationList) => (destinationList.find((elem) => (elem.name === destinationInput)));
-const getOffersData = (offersInput, offersList) => {
-  const currentType = offersList.find((elem) => (elem.type === offersInput));
-
-  return currentType.offers;
-};
+const getOffersData = (eventEditComponent) => (
+  Array.from(eventEditComponent.getElement().querySelectorAll(`.event__offer-selector`))
+  .filter((item) => (item.querySelector(`.event__offer-checkbox`).checked))
+  .map((item) => (
+    {
+      title: item.querySelector(`.event__offer-title`).textContent,
+      price: +item.querySelector(`.event__offer-price`).textContent
+    }
+  ))
+);
 
 const getDateData = (date) => (moment(date).toJSON());
 
-const parseFormData = (formData, offersData, destinationsData, preEventData) => (
+const parseFormData = (formData, destinationsData, preEventData, eventEditComponent) => (
   {
     'id': preEventData ? preEventData.id : nanoid(ID_SIZE),
     'type': formData.get(`event-type`),
@@ -130,16 +136,18 @@ const parseFormData = (formData, offersData, destinationsData, preEventData) => 
     'destination': getDestinationData(formData.get(`event-destination`), destinationsData),
     'base_price': parseInt(formData.get(`event-price`), 10),
     'is_favorite': formData.get(`event-favorite`) ? true : false,
-    'offers': getOffersData(formData.get(`event-type`), offersData),
+    'offers': getOffersData(eventEditComponent),
   }
 );
 
 export default class EventEditComponent extends AbstractSmartComponent {
-  constructor(eventData, offersData, destinationsData) {
+  constructor(eventData, offersData, destinationsData, addNewPoint, allPointsLength) {
     super();
     this._eventData = eventData;
     this._offersData = offersData;
     this._destinationsData = destinationsData;
+    this._addNewPoint = addNewPoint;
+    this._allPointsLength = allPointsLength;
 
     this._closeButtonClickHandler = null;
     this._submitHandler = null;
@@ -148,10 +156,11 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._selectTypeClickHandler = null;
     this._deleteButtonClickHandler = null;
     this._selectDestinationInputHandler = null;
+    this._inputValidation = null;
   }
 
   getTemplate() {
-    return getTripEditEvent(this._eventData, this._destinationsData);
+    return getTripEditEvent(this._eventData, this._offersData, this._destinationsData, this._addNewPoint, this._allPointsLength);
   }
 
   recoveryListeners() {
@@ -161,6 +170,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.setSelectTypeClickHandler(this._selectTypeClickHandler);
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this.setSelectDestinationInputHandler(this._selectDestinationInputHandler);
+    this.setInputValidation(this._inputValidation);
   }
 
   setCloseButtonClickHandler(handler) {
@@ -206,10 +216,18 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
+  setInputValidation(handler) {
+    this._inputValidation = handler;
+    const inputElement = this.getElement().querySelector(`#event-destination-1`);
+    inputElement.addEventListener(`input`, (evt) => {
+      handler(evt, inputElement);
+    });
+  }
+
   getData(preEventData) {
     const form = this.getElement().querySelector(`form`);
     const formData = new FormData(form);
 
-    return parseFormData(formData, this._offersData, this._destinationsData, preEventData);
+    return parseFormData(formData, this._destinationsData, preEventData, this);
   }
 }
