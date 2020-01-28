@@ -4,29 +4,16 @@ import {getCurrentPreInputText, getDefaultEventData} from '../utils/common.js';
 
 const OFFERS_DISPLAY_COUNT = 3;
 
-const generateOfferList = (offers) => {
-  const offersList = [];
-  let counter = 0;
-
-  for (let i = 0; i < offers.length; i++) {
-    if (offers[i].checked) {
-      offersList.push(
-          `<li class="event__offer">
-            <span class="event__offer-title">${offers[i].text}</span>
-            +
-            €&nbsp;<span class="event__offer-price">${offers[i].price}</span>
-          </li>`
-      );
-      counter = counter + 1;
-
-      if (counter >= OFFERS_DISPLAY_COUNT) {
-        break;
-      }
-    }
-  }
-
-  return offersList.join(`\n`);
-};
+const generateOfferList = (offers) => (
+  offers.map((offer) => (
+    `<li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+      +
+      €&nbsp;<span class="event__offer-price">${offer.price}</span>
+    </li>`))
+    .slice(0, OFFERS_DISPLAY_COUNT)
+    .join(`\n`)
+);
 
 const getTripEvent = (eventData) => {
   const currentEventData = getDefaultEventData(eventData);
@@ -53,7 +40,7 @@ const getTripEvent = (eventData) => {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${generateOfferList(currentEventData.offers)}
+          ${eventData ? generateOfferList(currentEventData.offers) : ``}
         </ul>
 
         <button class="event__rollup-btn" type="button">

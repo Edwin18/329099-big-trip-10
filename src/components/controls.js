@@ -13,8 +13,6 @@ export default class ControlsComponent extends AbstractComponent {
   }
 
   setViewClickHandler(handler) {
-    this.getElement().addEventListener(`click`, (evt) => {
-      handler(evt);
-    });
+    this.getElement().addEventListener(`click`, handler);
   }
 }

@@ -26,9 +26,10 @@ export default class TripInfoController {
     const infoDatesElement = document.querySelector(`.trip-info__dates`);
     const allPoints = this._pointsModel.getPointsAll();
 
-    infoTitleElement.innerText = this._getTripInfoTitle(allPoints);
-    infoDatesElement.innerHTML = this._getTripInfoDate(allPoints);
-
+    if (allPoints.length) {
+      infoTitleElement.innerText = this._getTripInfoTitle(allPoints);
+      infoDatesElement.innerHTML = this._getTripInfoDate(allPoints);
+    }
   }
 
   _setPrice() {
@@ -56,7 +57,6 @@ export default class TripInfoController {
   _getTripInfoTitle(allPoints) {
     const lastIndex = allPoints.length - 1;
 
-    return `${allPoints[0].destination.name} — ${allPoints.length > 3 ? `... — ` : `${allPoints[1].destination.name} — `}${allPoints[lastIndex].destination.name}`;
+    return `${allPoints[1] ? `${allPoints[0].destination.name} — ${allPoints.length > 3 ? `... — ` : `${allPoints[1].destination.name} — `}${allPoints[lastIndex].destination.name}` : `${allPoints[0].destination.name}`}`;
   }
-
 }
