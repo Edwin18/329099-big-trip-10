@@ -1,18 +1,4 @@
-import {getRandomIntegerNumber} from './common.js';
 import moment from 'moment';
-
-const DAYS = {
-  MIN: 0,
-  MAX: 5
-};
-const HOURS = {
-  MIN: 0,
-  MAX: 5
-};
-const MINUTES = {
-  MIN: 0,
-  MAX: 59
-};
 
 export const formatTimeMonth = (date) => (moment(date).format(`MMM DD`));
 
@@ -35,30 +21,4 @@ export const getTimeDifference = (start, end) => {
   const getMinutes = minutes <= 0 ? `` : `${minutes < 10 ? `0${minutes}M` : `${minutes}M`}`;
 
   return `${getDays} ${getHours} ${getMinutes}`;
-};
-
-export const getRandomEndDate = () => {
-  const date = new Date();
-  const randomHours = getRandomIntegerNumber(HOURS.MIN, HOURS.MAX);
-  const randomMinutes = getRandomIntegerNumber(MINUTES.MIN, MINUTES.MAX);
-  const randomDays = getRandomIntegerNumber(DAYS.MIN, DAYS.MAX);
-
-  date.setDate(date.getDate() + randomDays);
-  date.setHours(date.getHours() + randomHours);
-  date.setMinutes(date.getMinutes() + randomMinutes);
-
-  return date;
-};
-
-export const getRandomStartDate = () => {
-  const date = new Date();
-  const randomHours = getRandomIntegerNumber(HOURS.MIN, HOURS.MAX);
-  const randomMinutes = getRandomIntegerNumber(MINUTES.MIN, MINUTES.MAX);
-  const randomDays = getRandomIntegerNumber(DAYS.MIN, DAYS.MAX);
-
-  date.setDate(date.getDate() - randomDays);
-  date.setHours(date.getHours() - randomHours);
-  date.setMinutes(date.getMinutes() - randomMinutes);
-
-  return date;
 };

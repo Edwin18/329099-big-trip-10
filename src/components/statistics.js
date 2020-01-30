@@ -2,7 +2,7 @@ import AbstractComponent from "./abstract-component.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {reducer} from "../utils/common.js";
-import {tripType} from '../mock/event.js';
+import {tripType} from '../const.js';
 import moment from "moment";
 
 const emoji = {
@@ -51,6 +51,9 @@ export default class StatisticsComponent extends AbstractComponent {
   }
 
   show(data) {
+    if (!data.length) {
+      return;
+    }
     this._data = data;
     this.getElement().classList.remove(`visually-hidden`);
     this._init();

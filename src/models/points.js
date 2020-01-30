@@ -9,6 +9,7 @@ export default class Points {
 
     this._filterChangeHandlers = [];
     this._dataChangeHandlers = [];
+    this._shakeHandler = [];
   }
 
   setPoints(points) {
@@ -28,43 +29,45 @@ export default class Points {
     return this._points;
   }
 
-  removePoint(id) {
-    this._api.deletePoint(id);
+  removePoint(id, pointController) {
+    this._api.deletePoint(id)
+    .then(() => {
+      const index = this._points.findIndex((it) => it.id === id);
 
-    const index = this._points.findIndex((it) => it.id === id);
+      this._points = [].concat(this._points.slice(0, index), this._points.slice(index + 1));
 
-    if (index === -1) {
-      return false;
-    }
-
-    this._points = [].concat(this._points.slice(0, index), this._points.slice(index + 1));
-
-    this._callHandlers(this._dataChangeHandlers);
-
-    return true;
+      this._callHandlers(this._dataChangeHandlers);
+    })
+    .catch(() => {
+      pointController.shake();
+    });
   }
 
-  updatePoint(id, point) {
-    this._api.updatePoint(id, point);
+  updatePoint(id, point, pointController, favorite = false) {
+    this._api.updatePoint(id, point)
+    .then((newPoint) => {
+      const index = this._points.findIndex((it) => it.id === id);
 
-    const index = this._points.findIndex((it) => it.id === id);
+      this._points = [].concat(this._points.slice(0, index), newPoint, this._points.slice(index + 1));
 
-    if (index === -1) {
-      return false;
-    }
-
-    this._points = [].concat(this._points.slice(0, index), point, this._points.slice(index + 1));
-
-    this._callHandlers(this._dataChangeHandlers);
-
-    return true;
+      if (!favorite) {
+        this._callHandlers(this._dataChangeHandlers);
+      }
+    })
+    .catch(() => {
+      pointController.shake();
+    });
   }
 
-  addPoint(point) {
-    this._api.createPoint(point);
-
-    this._points = [].concat(point, this._points);
-    this._callHandlers(this._dataChangeHandlers);
+  addPoint(point, pointController) {
+    this._api.createPoint(point)
+    .then((newPoint) => {
+      this._points = [].concat(newPoint, this._points);
+      this._callHandlers(this._dataChangeHandlers);
+    })
+    .catch(() => {
+      pointController.shake();
+    });
   }
 
   setFilterChangeHandler(handler) {
@@ -73,6 +76,10 @@ export default class Points {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
+  }
+
+  setShakeHandler(handler) {
+    this._shakeHandler.push(handler);
   }
 
   _callHandlers(handlers) {

@@ -11,4 +11,12 @@ export default class TripInfoComponent extends AbstractComponent {
   getTemplate() {
     return getTripInfoElement(this._pointsData);
   }
+
+  hide() {
+    this.getElement().classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this.getElement().classList.remove(`visually-hidden`);
+  }
 }

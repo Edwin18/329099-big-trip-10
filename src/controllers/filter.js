@@ -3,9 +3,10 @@ import {render, RenderPosition} from '../utils/render.js';
 import {FilterType} from '../const.js';
 
 export default class FilterController {
-  constructor(container, pointsModel) {
+  constructor(container, pointsModel, tripInfoController) {
     this._container = container;
     this._pointsModel = pointsModel;
+    this._tripInfoController = tripInfoController;
 
     this._activeFilterType = FilterType.EVERYTHING;
     this._filterComponent = null;
@@ -29,7 +30,17 @@ export default class FilterController {
   }
 
   _onFilterChange(filterType) {
+    if (!this._pointsModel.getPointsAll().length) {
+      this._filterComponent.getElement().querySelector(`#filter-everything`).checked = true;
+      this._activeFilterType = FilterType.EVERYTHING;
+      return;
+    }
     this._pointsModel.setFilter(filterType);
     this._activeFilterType = filterType;
+  }
+
+  setDefaultFilter() {
+    this._onFilterChange(FilterType.EVERYTHING);
+    this._filterComponent.getElement().querySelector(`#filter-everything`).checked = true;
   }
 }
