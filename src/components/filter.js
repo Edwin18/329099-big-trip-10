@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {filters} from '../mock/filter.js';
+import {filters} from '../const.js';
 
 const FILTER_ID_PREFIX = `filter-`;
 

@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {sorts} from '../mock/sort.js';
+import {sorts} from '../const.js';
 
 export const SORT_TYPE = {
   DEFAULT: `event`,

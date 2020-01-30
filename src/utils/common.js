@@ -1,14 +1,4 @@
-import {tripType} from '../mock/event.js';
-
-export const getBoolean = () => (Math.random() > 0.5);
-
-export const getRandomIntegerNumber = (min, max) => (min + Math.floor(max * Math.random()));
-
-export const getRandomArr = (min, max, arr) => (
-  new Array(getRandomIntegerNumber(min, max))
-    .fill(``)
-    .map(() => (arr[getRandomIntegerNumber(0, arr.length)]))
-);
+import {tripType} from '../const.js';
 
 export const reducer = (sum, current) => sum + current;
 
@@ -28,7 +18,6 @@ export const getCurrentPreInputText = (currentType) => {
 
 export const getDefaultEventData = (eventData) => (
   {
-    'id': eventData ? eventData.id : ``,
     'type': eventData ? eventData.type : ``,
     'date_from': eventData ? eventData.date_from : ``,
     'date_to': eventData ? eventData.date_to : ``,

@@ -2,11 +2,9 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import OffersComponent from './offers.js';
 import DestinationsComponent from './destinations.js';
 import {getCurrentPreInputText, getDefaultEventData} from '../utils/common.js';
-import {tripType} from '../mock/event.js';
+import {POINT_MODE, BTN} from '../const.js';
+import {tripType} from '../const.js';
 import moment from 'moment';
-import nanoid from 'nanoid';
-
-const ID_SIZE = 4;
 
 const getOffersSection = (checkedOffers, offersList) => (new OffersComponent(checkedOffers, offersList).getTemplate());
 const getDestinationSection = (destinationsData) => (new DestinationsComponent(destinationsData).getTemplate());
@@ -127,9 +125,8 @@ const getOffersData = (eventEditComponent) => (
 
 const getDateData = (date) => (moment(date).toJSON());
 
-const parseFormData = (formData, destinationsData, preEventData, eventEditComponent) => (
+const parseFormData = (formData, destinationsData, eventEditComponent) => (
   {
-    'id': preEventData ? preEventData.id : nanoid(ID_SIZE),
     'type': formData.get(`event-type`),
     'date_from': getDateData(formData.get(`event-start-time`)),
     'date_to': getDateData(formData.get(`event-end-time`)),
@@ -152,7 +149,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._closeButtonClickHandler = null;
     this._submitHandler = null;
     this._favoriteButtonClickHandler = null;
-    this._favoriteComponent = null;
     this._selectTypeClickHandler = null;
     this._deleteButtonClickHandler = null;
     this._selectDestinationInputHandler = null;
@@ -166,7 +162,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
   recoveryListeners() {
     this.setCloseButtonClickHandler(this._closeButtonClickHandler);
     this.setSubmitHandler(this._submitHandler);
-    this.setFavoriteButtonChangeHandler(this._favoriteButtonClickHandler, this._favoriteComponent);
+    this.setFavoriteButtonChangeHandler(this._favoriteButtonClickHandler);
     this.setSelectTypeClickHandler(this._selectTypeClickHandler);
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this.setSelectDestinationInputHandler(this._selectDestinationInputHandler);
@@ -182,15 +178,21 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   setSubmitHandler(handler) {
     this._submitHandler = handler;
-    this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+    this.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
+      handler(evt, this._eventData);
+    });
   }
 
-  setFavoriteButtonChangeHandler(handler, component) {
+  setCreateButtonClickHandler(handler) {
+    this._createButtonClickHandler = handler;
+    this.getElement().querySelector(`.event__save-btn`).addEventListener(`click`, handler);
+  }
+
+  setFavoriteButtonChangeHandler(handler) {
     if (this._eventData) {
       this._favoriteButtonClickHandler = handler;
-      this._favoriteComponent = component;
       this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, () => {
-        handler(component);
+        handler(this);
       });
     }
   }
@@ -224,10 +226,45 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
-  getData(preEventData) {
+  disabledForm() {
+    const component = this.getElement();
+    Array.from(component.querySelectorAll(`button`)).forEach((it) => (it.disabled = true));
+    if (this._eventData) {
+      component.querySelector(`#event-favorite-1`).disabled = true;
+    }
+  }
+
+  unlockForm() {
+    const component = this.getElement();
+    Array.from(component.querySelectorAll(`button`)).forEach((it) => (it.disabled = false));
+    if (this._eventData) {
+      component.querySelector(`#event-favorite-1`).disabled = false;
+    }
+  }
+
+  savingBtnText(text) {
+    this.getElement().querySelector(`.event__save-btn`).textContent = text;
+  }
+
+  deletingBtnText(text) {
+    this.getElement().querySelector(`.event__reset-btn`).textContent = text;
+  }
+
+  setDefoultBtnText(pointMode) {
+    if (pointMode === POINT_MODE.DEFAULT) {
+      this.savingBtnText(BTN.SAVE);
+      this.deletingBtnText(BTN.DELETE);
+    }
+
+    if (pointMode === POINT_MODE.CREATE) {
+      this.savingBtnText(BTN.CREATE);
+    }
+  }
+
+  getData() {
     const form = this.getElement().querySelector(`form`);
     const formData = new FormData(form);
 
-    return parseFormData(formData, this._destinationsData, preEventData, this);
+    return parseFormData(formData, this._destinationsData, this);
   }
 }

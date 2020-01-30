@@ -2,6 +2,8 @@ import TripInfoComponent from '../components/trip-info.js';
 import {render, RenderPosition} from '../utils/render.js';
 import {formatTimeMonth} from '../utils/date.js';
 
+const MAX_DESTINATIONS_SHOW = 3;
+
 export default class TripInfoController {
   constructor(container, pointsModel) {
     this._container = container;
@@ -17,14 +19,19 @@ export default class TripInfoController {
   }
 
   updateTripInfo() {
+    this._tripInfoComponent.show();
     this._setInfo();
     this._setPrice();
+  }
+
+  hide() {
+    this._tripInfoComponent.hide();
   }
 
   _setInfo() {
     const infoTitleElement = document.querySelector(`.trip-info__title`);
     const infoDatesElement = document.querySelector(`.trip-info__dates`);
-    const allPoints = this._pointsModel.getPointsAll();
+    const allPoints = this._pointsModel.getPoints();
 
     if (allPoints.length) {
       infoTitleElement.innerText = this._getTripInfoTitle(allPoints);
@@ -34,14 +41,9 @@ export default class TripInfoController {
 
   _setPrice() {
     const priceElement = document.querySelector(`.trip-info__cost-value`);
-    const allPoints = this._pointsModel.getPointsAll();
+    const allPoints = this._pointsModel.getPoints();
     const totalPointsPrice = allPoints.reduce((result, point) => {
-      point.offers.forEach((offer) => {
-        // Сменить условие на offer.checked когда начну заливать данные на сервак
-        if (offer.title) {
-          result = result + offer.price;
-        }
-      });
+      point.offers.forEach((offer) => (result = result + offer.price));
       return result + point.base_price;
     }, 0);
 
@@ -57,6 +59,6 @@ export default class TripInfoController {
   _getTripInfoTitle(allPoints) {
     const lastIndex = allPoints.length - 1;
 
-    return `${allPoints[1] ? `${allPoints[0].destination.name} — ${allPoints.length > 3 ? `... — ` : `${allPoints[1].destination.name} — `}${allPoints[lastIndex].destination.name}` : `${allPoints[0].destination.name}`}`;
+    return `${allPoints[1] ? `${allPoints[0].destination.name} — ${allPoints.length > MAX_DESTINATIONS_SHOW ? `... — ` : `${allPoints[1].destination.name} — `}${allPoints[lastIndex].destination.name}` : `${allPoints[0].destination.name}`}`;
   }
 }
