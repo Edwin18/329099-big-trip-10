@@ -27,12 +27,11 @@ const getOffersList = (offersList, checkedOffers) => (
 
 const isChecked = (offer, checkedOffers) => {
   let result = false;
+  const test = checkedOffers.find((elem) => (elem.title === offer.title));
 
-  checkedOffers.forEach((checked) => {
-    if (offer.title === checked.title) {
-      result = true;
-    }
-  });
+  if (test) {
+    result = true;
+  }
 
   return result ? `checked` : ``;
 };

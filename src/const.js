@@ -1,4 +1,4 @@
-export const tripType = [
+export const tripTypes = [
   {text: `Transfer`, action: `to`, list: [
     {text: `Taxi`, name: `taxi`},
     {text: `Bus`, name: `bus`},
@@ -33,17 +33,17 @@ export const FilterType = {
   PAST: `past`
 };
 
-export const VIEW_MODE = {
+export const ViewMode = {
   DEFAULT: `default`,
   EDIT: `edit`
 };
 
-export const POINT_MODE = {
+export const PointMode = {
   DEFAULT: `default`,
   CREATE: `create`
 };
 
-export const BTN = {
+export const Button = {
   SAVE: `Save`,
   SAVING: `Saving...`,
   CREATE: `Create`,

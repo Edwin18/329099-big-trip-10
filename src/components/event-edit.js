@@ -2,8 +2,8 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import OffersComponent from './offers.js';
 import DestinationsComponent from './destinations.js';
 import {getCurrentPreInputText, getDefaultEventData} from '../utils/common.js';
-import {POINT_MODE, BTN} from '../const.js';
-import {tripType} from '../const.js';
+import {PointMode, Button} from '../const.js';
+import {tripTypes} from '../const.js';
 import moment from 'moment';
 
 const getOffersSection = (checkedOffers, offersList) => (new OffersComponent(checkedOffers, offersList).getTemplate());
@@ -37,7 +37,7 @@ const getEventTypeItems = (eventItems, currentType) => (
 );
 
 const getEventTypeList = (currentType) => (
-  tripType.map((elem) => (
+  tripTypes.map((elem) => (
     `<fieldset class="event__type-group">
       <legend class="visually-hidden">${elem.text}</legend>
       ${getEventTypeItems(elem.list, currentType)}
@@ -58,7 +58,7 @@ const getTripEditEvent = (eventData, offersData, destinationDatalist, addNewPoin
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${currentEventData.type || `taxi`}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" name="event-type-toggle" value="${currentEventData.type}">
+            <input class="event__type-toggle visually-hidden" id="event-type-toggle-1" type="checkbox" name="event-type-toggle" value="${currentEventData.type}">
             <div class="event__type-list">
               ${getEventTypeList(currentEventData.type)}
             </div>
@@ -153,6 +153,9 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._deleteButtonClickHandler = null;
     this._selectDestinationInputHandler = null;
     this._inputValidation = null;
+
+    this._startDate = eventData ? moment(eventData.date_from).valueOf() : moment(new Date()).valueOf();
+    this._endDate = eventData ? moment(eventData.date_to).valueOf() : moment(new Date()).valueOf();
   }
 
   getTemplate() {
@@ -167,6 +170,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this.setSelectDestinationInputHandler(this._selectDestinationInputHandler);
     this.setInputValidation(this._inputValidation);
+    this.setDateValidation();
   }
 
   setCloseButtonClickHandler(handler) {
@@ -218,6 +222,30 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
+  setDateValidation() {
+    const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
+    const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
+
+    startDateElement.addEventListener(`input`, (evt) => {
+      this._startDate = moment(evt.target.value).valueOf();
+      startDateElement.setCustomValidity(``);
+
+      if (this._startDate > this._endDate) {
+        startDateElement.setCustomValidity(`Дата начала путешествия не может быть позже даты окончания`);
+      }
+    });
+
+    endDateElement.addEventListener(`input`, (evt) => {
+      this._endDate = moment(evt.target.value).valueOf();
+
+      endDateElement.setCustomValidity(``);
+
+      if (this._endDate < this._startDate) {
+        endDateElement.setCustomValidity(`Дата окончания не может быть раньше даты начала`);
+      }
+    });
+  }
+
   setInputValidation(handler) {
     this._inputValidation = handler;
     const inputElement = this.getElement().querySelector(`#event-destination-1`);
@@ -251,13 +279,13 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   setDefoultBtnText(pointMode) {
-    if (pointMode === POINT_MODE.DEFAULT) {
-      this.savingBtnText(BTN.SAVE);
-      this.deletingBtnText(BTN.DELETE);
+    if (pointMode === PointMode.DEFAULT) {
+      this.savingBtnText(Button.SAVE);
+      this.deletingBtnText(Button.DELETE);
     }
 
-    if (pointMode === POINT_MODE.CREATE) {
-      this.savingBtnText(BTN.CREATE);
+    if (pointMode === PointMode.CREATE) {
+      this.savingBtnText(Button.CREATE);
     }
   }
 

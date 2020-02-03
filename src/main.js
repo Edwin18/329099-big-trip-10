@@ -6,7 +6,7 @@ import TripInfoController from './controllers/trip-info.js';
 import FilterController from './controllers/filter.js';
 import TripController from './controllers/trip.js';
 
-const AUTHORIZATION = `Basic dXNckBw456YXzdD249ZasdsAo=`;
+const AUTHORIZATION = `Basic dXNckBw46YXz4dD249Zasd45sAo=`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 const api = new API(END_POINT, AUTHORIZATION);

@@ -5,13 +5,13 @@ const Method = {
   DELETE: `DELETE`
 };
 
-const STATUS = {
+const Status = {
   SUCCESSFUL: 200,
   REDIRECTS: 300
 };
 
 const checkStatus = (response) => {
-  if (response.status >= STATUS.SUCCESSFUL && response.status < STATUS.REDIRECTS) {
+  if (response.status >= Status.SUCCESSFUL && response.status < Status.REDIRECTS) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);

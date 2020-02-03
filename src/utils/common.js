@@ -1,17 +1,17 @@
-import {tripType} from '../const.js';
+import {tripTypes} from '../const.js';
 
 export const reducer = (sum, current) => sum + current;
 
 export const getCurrentPreInputText = (currentType) => {
   let result = ``;
 
-  tripType.forEach((elem) => (
-    elem.list.forEach((type) => {
-      if (type.name === currentType) {
-        result = `${type.text} ${elem.action}`;
-      }
-    })
-  ));
+  for (const elem of tripTypes) {
+    const currentTypeResult = elem.list.find((innerElem) => (innerElem.name === currentType));
+    if (currentTypeResult) {
+      result = `${currentTypeResult.text} ${elem.action}`;
+      break;
+    }
+  }
 
   return result;
 };

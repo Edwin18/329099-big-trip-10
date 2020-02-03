@@ -1,7 +1,7 @@
 import AbstractComponent from './abstract-component.js';
 import {sorts} from '../const.js';
 
-export const SORT_TYPE = {
+export const SortType = {
   DEFAULT: `event`,
   TIME: `time`,
   PRICE: `price`
@@ -45,7 +45,7 @@ export default class SortComponent extends AbstractComponent {
   constructor() {
     super();
 
-    this._currenSortType = SORT_TYPE.DEFAULT;
+    this._currenSortType = SortType.DEFAULT;
   }
 
   getTemplate() {
@@ -61,7 +61,7 @@ export default class SortComponent extends AbstractComponent {
   }
 
   setDefaultSortType() {
-    this._currenSortType = SORT_TYPE.DEFAULT;
+    this._currenSortType = SortType.DEFAULT;
     this.getElement().querySelector(`#sort-event`).checked = 1;
   }
 

@@ -4,18 +4,21 @@ import {getCurrentPreInputText, getDefaultEventData} from '../utils/common.js';
 
 const OFFERS_DISPLAY_COUNT = 3;
 
-const generateOfferList = (offers) => (
-  offers.map((offer) => (
-    `<li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
+const generateOfferList = (eventOffers, allOffers, type) => (
+  eventOffers.map((offer) => {
+    const currentOffers = allOffers.find((elem) => (elem.type === type));
+    const currrentOffer = currentOffers.offers.find((elem) => (elem.title === offer.title));
+    return `<li class="event__offer">
+      <span class="event__offer-title">${currrentOffer.title}</span>
       +
-      €&nbsp;<span class="event__offer-price">${offer.price}</span>
-    </li>`))
-    .slice(0, OFFERS_DISPLAY_COUNT)
-    .join(`\n`)
+      €&nbsp;<span class="event__offer-price">${currrentOffer.price}</span>
+    </li>`;
+  })
+  .slice(0, OFFERS_DISPLAY_COUNT)
+  .join(`\n`)
 );
 
-const getTripEvent = (eventData) => {
+const getTripEvent = (eventData, offersData) => {
   const currentEventData = getDefaultEventData(eventData);
   return (
     `<li class="trip-events__item">
@@ -40,7 +43,7 @@ const getTripEvent = (eventData) => {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${eventData ? generateOfferList(currentEventData.offers) : ``}
+          ${eventData ? generateOfferList(currentEventData.offers, offersData, eventData.type) : ``}
         </ul>
 
         <button class="event__rollup-btn" type="button">
@@ -51,13 +54,14 @@ const getTripEvent = (eventData) => {
 };
 
 export default class EventComponent extends AbstractComponent {
-  constructor(eventData) {
+  constructor(eventData, offersData) {
     super();
     this._eventData = eventData;
+    this._offersData = offersData;
   }
 
   getTemplate() {
-    return getTripEvent(this._eventData);
+    return getTripEvent(this._eventData, this._offersData);
   }
 
   setEditButtonClickHandler(handler) {

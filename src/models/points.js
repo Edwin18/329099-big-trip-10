@@ -1,5 +1,6 @@
 import {getPointsByFilter} from '../utils/filter.js';
 import {FilterType} from '../const.js';
+import moment from 'moment';
 
 export default class Points {
   constructor(api) {
@@ -9,7 +10,6 @@ export default class Points {
 
     this._filterChangeHandlers = [];
     this._dataChangeHandlers = [];
-    this._shakeHandler = [];
   }
 
   setPoints(points) {
@@ -22,11 +22,12 @@ export default class Points {
   }
 
   getPoints() {
-    return getPointsByFilter(this._points, this._activeFilterType);
+    const filteredPoints = getPointsByFilter(this._points, this._activeFilterType);
+    return this._sortPoints(filteredPoints);
   }
 
   getPointsAll() {
-    return this._points;
+    return this._sortPoints(this._points);
   }
 
   removePoint(id, pointController) {
@@ -78,8 +79,8 @@ export default class Points {
     this._dataChangeHandlers.push(handler);
   }
 
-  setShakeHandler(handler) {
-    this._shakeHandler.push(handler);
+  _sortPoints(points) {
+    return points.slice().sort((a, b) => (moment(a.date_from).valueOf() - moment(b.date_from).valueOf()));
   }
 
   _callHandlers(handlers) {

@@ -2,7 +2,7 @@ import AbstractComponent from "./abstract-component.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {reducer} from "../utils/common.js";
-import {tripType} from '../const.js';
+import {tripTypes} from '../const.js';
 import moment from "moment";
 
 const emoji = {
@@ -150,22 +150,23 @@ export default class StatisticsComponent extends AbstractComponent {
 
   _getFilteredTransportData() {
     const allCurentTypes = [];
+    const data = [];
+    const labelsWithEmoji = [];
 
-    tripType[0].list.forEach((type) => (this._data.forEach((point) => {
-      if (type.name === point.type) {
-        allCurentTypes.push(point.type);
+    for (const point of this._data) {
+      const result = tripTypes[0].list.find((elem) => (elem.name === point.type));
+      if (result) {
+        allCurentTypes.push(result.name);
       }
-    })));
+    }
 
     const typeNames = new Set(allCurentTypes);
 
-    const data = [...typeNames].map((typeName) => {
+    for (const typeName of typeNames) {
       const filteredData = this._data.filter((pointData) => pointData.type === typeName);
-
-      return filteredData.length;
-    });
-
-    const labelsWithEmoji = [...typeNames].map((typeName) => `${emoji[typeName]} ${typeName.toUpperCase()}`);
+      data.push(filteredData.length);
+      labelsWithEmoji.push(`${emoji[typeName]} ${typeName.toUpperCase()}`);
+    }
 
     return {
       labels: labelsWithEmoji,

@@ -11,7 +11,12 @@ export default class FilterController {
     this._activeFilterType = FilterType.EVERYTHING;
     this._filterComponent = null;
 
-    this._onFilterChange = this._onFilterChange.bind(this);
+    this._filterChangeHandler = this._filterChangeHandler.bind(this);
+  }
+
+  setDefaultFilter() {
+    this._filterChangeHandler(FilterType.EVERYTHING);
+    this._filterComponent.getElement().querySelector(`#filter-everything`).checked = true;
   }
 
   hide() {
@@ -24,12 +29,12 @@ export default class FilterController {
 
   render() {
     this._filterComponent = new FilterComponent();
-    this._filterComponent.setFilterChangeHandler(this._onFilterChange);
+    this._filterComponent.setFilterChangeHandler(this._filterChangeHandler);
 
     render(this._container, this._filterComponent.getElement(), RenderPosition.BEFOREEND);
   }
 
-  _onFilterChange(filterType) {
+  _filterChangeHandler(filterType) {
     if (!this._pointsModel.getPointsAll().length) {
       this._filterComponent.getElement().querySelector(`#filter-everything`).checked = true;
       this._activeFilterType = FilterType.EVERYTHING;
@@ -37,10 +42,5 @@ export default class FilterController {
     }
     this._pointsModel.setFilter(filterType);
     this._activeFilterType = filterType;
-  }
-
-  setDefaultFilter() {
-    this._onFilterChange(FilterType.EVERYTHING);
-    this._filterComponent.getElement().querySelector(`#filter-everything`).checked = true;
   }
 }
