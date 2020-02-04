@@ -1,7 +1,7 @@
 import AbstractComponent from './abstract-component.js';
 import {formatTimeMonth} from '../utils/date.js';
 
-const destinationsShow = {
+const DestinationsShow = {
   MIN: 2,
   MAX: 3
 };
@@ -56,8 +56,8 @@ export default class TripInfoComponent extends AbstractComponent {
     const lastIndex = allPoints.length - 1;
 
     return `${allPoints[1] ?
-      `${allPoints[0].destination.name} — ${allPoints.length === destinationsShow.MIN ?
-        `${allPoints[lastIndex].destination.name}` : `${allPoints.length === destinationsShow.MAX ?
+      `${allPoints[0].destination.name} — ${allPoints.length === DestinationsShow.MIN ?
+        `${allPoints[lastIndex].destination.name}` : `${allPoints.length === DestinationsShow.MAX ?
           `${allPoints[1].destination.name} — ${allPoints[lastIndex].destination.name}` : `... — ${allPoints[lastIndex].destination.name}`}`}`
       : `${allPoints[0].destination.name}`}`;
   }

@@ -39,21 +39,21 @@ export default class API {
     .then((response) => response.json());
   }
 
-  createPoint(data) {
+  createPoint(point) {
     return this._load({
       url: `points`,
       method: Method.POST,
-      body: JSON.stringify(data),
+      body: JSON.stringify(point),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then((response) => response.json());
   }
 
-  updatePoint(id, data) {
+  updatePoint(id, point) {
     return this._load({
       url: `points/${id}`,
       method: Method.PUT,
-      body: JSON.stringify(data),
+      body: JSON.stringify(point),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then((response) => response.json());

@@ -229,6 +229,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     startDateElement.addEventListener(`input`, (evt) => {
       this._startDate = moment(evt.target.value).valueOf();
       startDateElement.setCustomValidity(``);
+      endDateElement.setCustomValidity(``);
 
       if (this._startDate > this._endDate) {
         startDateElement.setCustomValidity(`Дата начала путешествия не может быть позже даты окончания`);
@@ -237,7 +238,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
     endDateElement.addEventListener(`input`, (evt) => {
       this._endDate = moment(evt.target.value).valueOf();
-
+      startDateElement.setCustomValidity(``);
       endDateElement.setCustomValidity(``);
 
       if (this._endDate < this._startDate) {

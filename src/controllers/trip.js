@@ -139,36 +139,34 @@ export default class TripController {
   _setSortType(sortType) {
     let sortedData = [];
 
+    this._removeNewEvent();
+    this._sortComponent.removeDirection();
+
     switch (sortType) {
       case SortType.DEFAULT:
-        this._removeNewEvent();
         this._sortComponent.removeDirection();
         remove(this._daysListComponent);
         remove(this._emptyDayComponent);
         render(this._container, this._daysListComponent.getElement(), RenderPosition.BEFOREEND);
         this._renderDays(this._daysListComponent.getElement(), this._pointsModel.getPoints());
         this._currentSortType = SortType.DEFAULT;
-        this._tripInfoController.updateTripInfo();
         break;
       case SortType.TIME:
         sortedData = this._pointsModel.getPoints().slice().sort((a, b) => (moment(b.date_to).valueOf() - moment(b.date_from).valueOf()) - (moment(a.date_to).valueOf() - moment(a.date_from).valueOf()));
-        this._renderSortedEvents(sortedData);
-        this._removeNewEvent();
-        this._sortComponent.removeDirection();
-        this._sortComponent.setDirection(SortType.TIME);
         this._currentSortType = SortType.TIME;
-        this._tripInfoController.updateTripInfo();
         break;
       case SortType.PRICE:
         sortedData = this._pointsModel.getPoints().slice().sort((a, b) => b.base_price - a.base_price);
-        this._renderSortedEvents(sortedData);
-        this._removeNewEvent();
-        this._sortComponent.removeDirection();
-        this._sortComponent.setDirection(SortType.PRICE);
         this._currentSortType = SortType.PRICE;
-        this._tripInfoController.updateTripInfo();
         break;
     }
+
+    if (sortedData.length) {
+      this._renderSortedEvents(sortedData);
+      this._sortComponent.setDirection(this._currentSortType);
+    }
+
+    this._tripInfoController.updateTripInfo();
   }
 
   _hide() {
@@ -223,6 +221,8 @@ export default class TripController {
     if (this._pointsModel.getPoints().length !== 0) {
       render(this._container, this._daysListComponent.getElement(), RenderPosition.BEFOREEND);
       this._renderDays(this._daysListComponent.getElement(), this._pointsModel.getPoints());
+    } else {
+      render(this._container, this._daysListComponent.getElement(), RenderPosition.BEFOREEND);
     }
   }
 
