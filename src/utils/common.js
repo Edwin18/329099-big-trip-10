@@ -1,7 +1,5 @@
 import {tripTypes} from '../const.js';
 
-export const reducer = (sum, current) => sum + current;
-
 export const getCurrentPreInputText = (currentType) => {
   let result = ``;
 

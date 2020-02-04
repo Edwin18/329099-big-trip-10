@@ -1,7 +1,6 @@
 import AbstractComponent from "./abstract-component.js";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import {reducer} from "../utils/common.js";
 import {tripTypes} from '../const.js';
 import moment from "moment";
 
@@ -132,67 +131,62 @@ export default class StatisticsComponent extends AbstractComponent {
   }
 
   _getFilteredMoneyData() {
-    const typeNames = new Set(this._data.map((elem) => elem.type));
+    const resultData = {};
+    const labelsWithEmoji = [];
 
-    const data = [...typeNames].map((typeName) => {
-      const filteredData = this._data.filter((pointData) => pointData.type === typeName);
-
-      return filteredData.map((elem) => elem.base_price).reduce(reducer);
+    this._data.forEach((it) => {
+      if (resultData[it.type]) {
+        resultData[it.type] = resultData[it.type] + it.base_price;
+      } else {
+        resultData[it.type] = it.base_price;
+        labelsWithEmoji.push(`${emoji[it.type]} ${it.type.toUpperCase()}`);
+      }
     });
-
-    const labelsWithEmoji = [...typeNames].map((typeName) => `${emoji[typeName]} ${typeName.toUpperCase()}`);
 
     return {
       labels: labelsWithEmoji,
-      data,
+      data: Object.values(resultData),
     };
   }
 
   _getFilteredTransportData() {
-    const allCurentTypes = [];
-    const data = [];
+    const resultData = {};
     const labelsWithEmoji = [];
 
-    for (const point of this._data) {
-      const result = tripTypes[0].list.find((elem) => (elem.name === point.type));
-      if (result) {
-        allCurentTypes.push(result.name);
+    this._data.forEach((it) => {
+      if (resultData[it.type]) {
+        resultData[it.type]++;
+      } else {
+        const isTransport = tripTypes[0].list.find((elem) => (elem.name === it.type));
+        if (isTransport) {
+          resultData[it.type] = 1;
+          labelsWithEmoji.push(`${emoji[it.type]} ${it.type.toUpperCase()}`);
+        }
       }
-    }
-
-    const typeNames = new Set(allCurentTypes);
-
-    for (const typeName of typeNames) {
-      const filteredData = this._data.filter((pointData) => pointData.type === typeName);
-      data.push(filteredData.length);
-      labelsWithEmoji.push(`${emoji[typeName]} ${typeName.toUpperCase()}`);
-    }
+    });
 
     return {
       labels: labelsWithEmoji,
-      data,
+      data: Object.values(resultData),
     };
   }
 
   _getFilteredTimeData() {
-    const typeNames = new Set(this._data.map((elem) => elem.type));
+    const resultData = {};
+    const labelsWithEmoji = [];
 
-    const data = [...typeNames].map((typeName) => {
-      const filteredData = this._data.filter((pointData) => pointData.type === typeName);
-
-
-      return filteredData.map((elem) => {
-        const amountOfHours = moment.duration(moment(elem.date_to).diff(elem.date_from)).asHours();
-
-        return Math.round(amountOfHours);
-      }).reduce(reducer);
+    this._data.forEach((it) => {
+      if (resultData[it.type]) {
+        resultData[it.type] = resultData[it.type] + Math.round(moment.duration(moment(it.date_to).diff(it.date_from)).asHours());
+      } else {
+        resultData[it.type] = Math.round(moment.duration(moment(it.date_to).diff(it.date_from)).asHours());
+        labelsWithEmoji.push(`${emoji[it.type]} ${it.type.toUpperCase()}`);
+      }
     });
-
-    const labelsWithEmoji = [...typeNames].map((typeName) => `${emoji[typeName]} ${typeName.toUpperCase()}`);
 
     return {
       labels: labelsWithEmoji,
-      data,
+      data: Object.values(resultData),
     };
   }
 
